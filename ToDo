@@ -1,0 +1,2 @@
+configure small JEE application
+use hibernates instead of entity manager
