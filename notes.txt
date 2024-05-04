@@ -1,0 +1,5 @@
+Entities:
+    - Course ( name, duration, category, rating, capacity, number of enrolled students, and list of reviews (one-to-many), course-status (done, in progress))
+    - User (name, email, password, affiliation, and bio) and three classes will extend it (admin, instructor, student) each with its specific attributes.
+    - notifications (student id, course id, notification)
+    - student-enrollments (enrollment id, course id, student id, grade)
