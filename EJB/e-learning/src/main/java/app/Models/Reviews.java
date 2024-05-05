@@ -8,25 +8,24 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class Notifications {
+public class Reviews {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long notificationId;
+    private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "fk_studentId")
+    @JoinColumn(name = "student_id")
     private Students student;
 
     @ManyToOne
-    @JoinColumn(name = "fk_courseId")
+    @JoinColumn(name = "course_id")
     private Courses course;
-    public Notifications() {}
-    private String notification;
-    public Long getNotificationId() {
-        return notificationId;
+
+    public Long getId() {
+        return id;
     }
-    public void setNotificationId(Long notificationId) {
-        this.notificationId = notificationId;
+    public void setId(Long id) {
+        this.id = id;
     }
     public Students getStudent() {
         return student;
@@ -40,10 +39,22 @@ public class Notifications {
     public void setCourse(Courses course) {
         this.course = course;
     }
-    public String getNotification() {
-        return notification;
+    public String getReviewText() {
+        return reviewText;
     }
-    public void setNotification(String notification) {
-        this.notification = notification;
+    public void setReviewText(String reviewText) {
+        this.reviewText = reviewText;
     }
+    public int getRating() {
+        return rating;
+    }
+    public void setRating(int rating) {
+        this.rating = rating;
+    }
+    private String reviewText;
+    private int rating;
+
+    public Reviews() {
+    }
+
 }

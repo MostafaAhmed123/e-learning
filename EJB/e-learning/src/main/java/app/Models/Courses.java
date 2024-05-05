@@ -1,11 +1,18 @@
 package app.Models;
 
+import java.util.Set;
+
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 
 import app.Util.Enums.Category;
@@ -27,7 +34,28 @@ public class Courses {
     @Enumerated(EnumType.STRING)
     private Category category;
 
+    @OneToMany(mappedBy = "course", fetch = FetchType.EAGER)
+    private Set<Notifications> notifications;
+
+    @OneToMany(mappedBy = "course")
+    private Set<Reviews> courseReviews;
+
+    @ManyToMany
+    @JoinTable(
+        name = "course_user",
+        joinColumns = @JoinColumn(name = "course_id"),
+        inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private Set<Students> students;
     public Courses() {
+    }
+
+    public Set<Notifications> getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(Set<Notifications> notifications) {
+        this.notifications = notifications;
     }
 
     public Long getCourseId() {
@@ -76,6 +104,22 @@ public class Courses {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public Set<Reviews> getCourseReviews() {
+        return courseReviews;
+    }
+
+    public void setCourseReviews(Set<Reviews> courseReviews) {
+        this.courseReviews = courseReviews;
+    }
+
+    public Set<Students> getStudents() {
+        return students;
+    }
+
+    public void setStudents(Set<Students> students) {
+        this.students = students;
     }
 
     public Category getCategory() {
