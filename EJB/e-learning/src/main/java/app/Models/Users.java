@@ -7,6 +7,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.persistence.DiscriminatorType;
 
 @Entity
@@ -16,8 +18,13 @@ public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
+    @NotNull
     private String name;
+    @Size(min = 3)
+    @Size(max = 20)
+    @NotNull
     private String password;
+    @NotNull
     private String email;
     private String bio;
     private String affiliation;
