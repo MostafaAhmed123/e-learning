@@ -14,11 +14,11 @@ public class Notifications {
     private Long notificationId;
 
     @ManyToOne
-    @JoinColumn(name = "fk_studentId")
+    @JoinColumn(name = "userId")
     private Students student;
 
     @ManyToOne
-    @JoinColumn(name = "fk_courseId")
+    @JoinColumn(name = "courseId")
     private Courses course;
     public Notifications() {}
     private String notification;

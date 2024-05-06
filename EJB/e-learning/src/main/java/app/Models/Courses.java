@@ -43,8 +43,8 @@ public class Courses {
     @ManyToMany
     @JoinTable(
         name = "course_user",
-        joinColumns = @JoinColumn(name = "course_id"),
-        inverseJoinColumns = @JoinColumn(name = "user_id")
+        joinColumns = @JoinColumn(name = "courseId"),
+        inverseJoinColumns = @JoinColumn(name = "userId")
     )
     private Set<Students> students;
     public Courses() {

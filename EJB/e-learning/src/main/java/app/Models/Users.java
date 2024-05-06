@@ -29,6 +29,15 @@ public class Users {
     private String bio;
     private String affiliation;
 
+    public Users(@NotNull String name, @Size(min = 3) @Size(max = 20) @NotNull String password, @NotNull String email,
+            String bio, String affiliation) {
+        this.name = name;
+        this.password = password;
+        this.email = email;
+        this.bio = bio;
+        this.affiliation = affiliation;
+    }
+
     public Long getUserId() {
         return userId;
     }

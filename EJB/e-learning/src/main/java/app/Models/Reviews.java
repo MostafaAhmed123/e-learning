@@ -14,11 +14,11 @@ public class Reviews {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "student_id")
+    @JoinColumn(name = "userId")
     private Students student;
 
     @ManyToOne
-    @JoinColumn(name = "course_id")
+    @JoinColumn(name = "courseId")
     private Courses course;
 
     public Long getId() {
