@@ -69,6 +69,7 @@ public class InstructorService {
                         ? app.Util.Enums.RequestStatus.ACCEPTED
                         : app.Util.Enums.RequestStatus.REUECTED);
         session.update(enrollment);
+        // TODO notify student about enrollment's update
         transaction.commit();
 
         session.close();
