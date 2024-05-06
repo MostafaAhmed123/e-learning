@@ -37,7 +37,7 @@ public class CourseService {
 
     private boolean isCourseExist(String name) {
         Session session = HibernateUtil.getSession();
-        String hql = "FROM Courses WHERE name = :name AND c.approvedByAdmin == true";
+        String hql = "FROM Courses WHERE name = :name AND c.approvedByAdmin = true";
         Query<Courses> query = session.createQuery(hql, Courses.class);
         query.setParameter("name", name);
         return query.getResultList().size() > 0;
@@ -70,11 +70,11 @@ public class CourseService {
             String hql;
             Query<Courses> query;
             if (byName) {
-                hql = "FROM Courses c WHERE c.name LIKE :searchTerm AND c.approvedByAdmin == true";
+                hql = "FROM Courses c WHERE c.name LIKE :searchTerm AND c.approvedByAdmin = true";
                 query = session.createQuery(hql, Courses.class);
                 query.setParameter("searchTerm", searchTerm);
             } else {
-                hql = "FROM Courses c WHERE c.category LIKE :searchTerm AND c.approvedByAdmin == true";
+                hql = "FROM Courses c WHERE c.category LIKE :searchTerm AND c.approvedByAdmin = true";
                 query = session.createQuery(hql, Courses.class);
                 query.setParameter("searchTerm", app.Util.Enums.Category.valueOf(searchTerm));
             }
@@ -92,7 +92,7 @@ public class CourseService {
         Session session = HibernateUtil.getSession();
         List<Courses> courses = null;
         try {
-            Query<Courses> query = session.createQuery("FROM Courses c WHERE c.approvedByAdmin == true", Courses.class);
+            Query<Courses> query = session.createQuery("FROM Courses c WHERE c.approvedByAdmin = true", Courses.class);
             courses = query.getResultList();
         } catch (Exception e) {
             System.out.println("Error in Browsing " + e.getMessage());

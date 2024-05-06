@@ -34,7 +34,7 @@ public class InstructorService {
         List<CourseEnrollments> enrollments = null;
         Session session = HibernateUtil.getSession();
         try {
-            String hql = "FROM CourseEnrollments ce WHERE ce.course.courseId = :courseId AND ce.status = :stat";
+            String hql = "FROM CourseEnrollments ce WHERE ce.course.courseId = :courseId AND ce.status = :stat AND ce.course.approvedByAdmin = true";
             Query<CourseEnrollments> query = session.createQuery(hql, CourseEnrollments.class);
             query.setParameter("courseId", courseId);
             query.setParameter("stat", app.Util.Enums.RequestStatus.PENDING);
