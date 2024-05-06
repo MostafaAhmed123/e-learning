@@ -1,6 +1,9 @@
 package app.Services;
 
 import java.util.List;
+
+import javax.ejb.Stateless;
+
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
@@ -8,6 +11,8 @@ import app.Models.Users;
 import app.Util.HibernateUtil;
 import app.Util.Validations.validateEmail;
 
+
+@Stateless
 public class AuthenticationService {
     public List<Users> login(String email, String password) {
         Session session = HibernateUtil.getSession();

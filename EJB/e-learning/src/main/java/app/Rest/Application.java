@@ -8,6 +8,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import app.Models.Admins;
 import app.Models.Instructors;
 import app.Models.Students;
 import app.Models.Users;
@@ -25,10 +26,13 @@ public class Application {
     @POST
     @Path("signup")
     public boolean addUser(UserDTO wrapper) {
-        return auth.signup(wrapper.isInstructor
-                ? new Instructors(wrapper.name, wrapper.password, wrapper.email, wrapper.bio, wrapper.affiliation,
-                        wrapper.years_of_experience)
-                : new Students(wrapper.name, wrapper.password, wrapper.email, wrapper.bio, wrapper.affiliation));
+        return auth.signup(wrapper.isAdmin ? new Admins(wrapper.name, wrapper.password, wrapper.email, null, null)
+                : (wrapper.isInstructor
+                        ? new Instructors(wrapper.name, wrapper.password, wrapper.email, wrapper.bio,
+                                wrapper.affiliation,
+                                wrapper.years_of_experience)
+                        : new Students(wrapper.name, wrapper.password, wrapper.email, wrapper.bio,
+                                wrapper.affiliation)));
     }
 
     @POST
