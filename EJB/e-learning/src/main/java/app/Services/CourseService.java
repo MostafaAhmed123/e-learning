@@ -1,0 +1,119 @@
+package app.Services;
+
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Root;
+
+import org.hibernate.Transaction;
+
+import org.hibernate.Session;
+import org.hibernate.query.Query;
+
+import app.Models.Courses;
+import app.Models.Reviews;
+import app.Util.HibernateUtil;
+
+@Stateless
+public class CourseService {
+    public Courses getCourse(Long id) {
+        Session session = null;
+        Courses course = null;
+        try {
+            session = HibernateUtil.getSession();
+            course = session.get(Courses.class, id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (session != null)
+                session.close();
+        }
+        return course;
+    }
+
+    private boolean isCourseExist(String name) {
+        Session session = HibernateUtil.getSession();
+        String hql = "FROM Courses WHERE name = :name";
+        Query<Courses> query = session.createQuery(hql, Courses.class);
+        query.setParameter("name", name);
+        return query.getResultList().size() > 0;
+    }
+
+    public boolean createCourse(Courses course) {
+        Transaction transaction = null;
+        try {
+            Session session = HibernateUtil.getSession();
+            transaction = session.beginTransaction();
+            if (isCourseExist(course.getName()))
+                return false;
+            session.save(course);
+            transaction.commit();
+            session.close();
+        } catch (Exception e) {
+            if (transaction != null)
+                transaction.rollback();
+            System.out.println(e.getMessage());
+            return false;
+        }
+        return true;
+    }
+
+    public List<Courses> search(String searchTerm, boolean byName) {
+        Session session = null;
+        List<Courses> courses = null;
+        try {
+            session = HibernateUtil.getSession();
+            String hql;
+            Query<Courses> query;
+            if (byName) {
+                hql = "FROM Courses c WHERE c.name LIKE :searchTerm";
+                query = session.createQuery(hql, Courses.class);
+                query.setParameter("searchTerm", searchTerm);
+            } else {
+                hql = "FROM Courses c WHERE c.category LIKE :searchTerm";
+                query = session.createQuery(hql, Courses.class);
+                query.setParameter("searchTerm", app.Util.Enums.Category.valueOf(searchTerm));
+            }
+            courses = query.getResultList();
+        } catch (Exception e) {
+            System.out.println("Error in search " + e.getMessage());
+        } finally {
+            if (session != null)
+                session.close();
+        }
+        return courses;
+    }
+
+    public List<Courses> getAllCourses() {
+        Session session = HibernateUtil.getSession();
+        List<Courses> courses = null;
+        try {
+            Query<Courses> query = session.createQuery("FROM Courses", Courses.class);
+            courses = query.getResultList();
+        } catch (Exception e) {
+            System.out.println("Error in Browsing " + e.getMessage());
+        } finally {
+            session.close();
+        }
+        return courses;
+    }
+
+    public List<Courses> getAllCoursesSortedByRating() {
+        try (Session session = HibernateUtil.getSession()) {
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<Courses> cq = cb.createQuery(Courses.class);
+            Root<Courses> courseRoot = cq.from(Courses.class);
+            Join<Courses, Reviews> reviewsJoin = courseRoot.join("courseReviews");
+            cq.select(courseRoot).groupBy(courseRoot.get("courseId"))
+                    .orderBy(cb.desc(cb.avg(reviewsJoin.get("rating"))));
+            return session.createQuery(cq).getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+}

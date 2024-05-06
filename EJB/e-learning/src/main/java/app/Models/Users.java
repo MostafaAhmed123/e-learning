@@ -1,5 +1,6 @@
 package app.Models;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -28,6 +29,17 @@ public class Users {
     private String email;
     private String bio;
     private String affiliation;
+
+    @Column(name = "user_type", insertable = false, updatable = false)
+    private String user_type;
+
+    public String getUser_type() {
+        return user_type;
+    }
+
+    public void setUser_type(String userType) {
+        this.user_type = userType;
+    }
 
     public Users(@NotNull String name, @Size(min = 3) @Size(max = 20) @NotNull String password, @NotNull String email,
             String bio, String affiliation) {

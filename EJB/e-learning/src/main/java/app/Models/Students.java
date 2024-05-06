@@ -2,10 +2,10 @@ package app.Models;
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -16,8 +16,8 @@ public class Students extends Users {
     @OneToMany(mappedBy = "student", fetch = FetchType.EAGER)
     private Set<Notifications> notifications;
 
-    @ManyToMany(mappedBy = "students")
-    private Set<Courses> courses;
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<CourseEnrollments> courseEnrollments;
 
     @OneToMany(mappedBy = "student", fetch = FetchType.EAGER)
     private Set<Reviews> reviews;
@@ -39,13 +39,7 @@ public class Students extends Users {
         this.notifications = notifications;
     }
 
-    public Set<Courses> getCourses() {
-        return courses;
-    }
 
-    public void setCourses(Set<Courses> courses) {
-        this.courses = courses;
-    }
 
     public Set<Reviews> getReviews() {
         return reviews;
@@ -53,6 +47,16 @@ public class Students extends Users {
 
     public void setReviews(Set<Reviews> reviews) {
         this.reviews = reviews;
+    }
+
+
+    public Set<CourseEnrollments> getCourseEnrollments() {
+        return courseEnrollments;
+    }
+
+
+    public void setCourseEnrollments(Set<CourseEnrollments> courseEnrollments) {
+        this.courseEnrollments = courseEnrollments;
     }
 
 

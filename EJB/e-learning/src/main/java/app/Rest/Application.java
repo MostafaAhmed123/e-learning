@@ -1,5 +1,7 @@
 package app.Rest;
 
+
+
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -9,10 +11,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import app.Models.Admins;
+import app.Models.Courses;
 import app.Models.Instructors;
 import app.Models.Students;
 import app.Models.Users;
 import app.Services.AuthenticationService;
+import app.Services.CourseService;
+import app.Services.InstructorService;
+import app.Util.DTOs.CourseDTO;
 import app.Util.DTOs.LoginRequest;
 import app.Util.DTOs.UserDTO;
 import javax.ws.rs.Produces;
@@ -22,7 +28,8 @@ import javax.ws.rs.Produces;
 @Path("/")
 public class Application {
     private AuthenticationService auth = new AuthenticationService();
-
+    private CourseService crsService = new CourseService();
+    private InstructorService instructorService = new InstructorService();
     @POST
     @Path("signup")
     public boolean addUser(UserDTO wrapper) {
@@ -38,12 +45,28 @@ public class Application {
     @POST
     @Path("login")
     public Response login(LoginRequest request) {
-        List<Users> userList = auth.login(request.email, request.password);
-        if (userList != null && !userList.isEmpty())
-            return Response.ok(userList.get(0)).build();
+        List<Users> users = auth.login(request.email, request.password);
+        if (users != null && !users.isEmpty())
+            return Response.ok(users.get(0)).build();
         else
             return Response.status(Response.Status.UNAUTHORIZED)
                     .entity("Invalid email or password.")
                     .build();
+    }
+
+    @POST
+    @Path("course")
+    public boolean createCourse(CourseDTO wrapper){
+        Courses course = new Courses();
+        Instructors instructor = instructorService.getInstructor(wrapper.instructorID);
+        course.setInstructor(instructor);
+        course.setApprovedByAdmin(false);
+        course.setCapacity(wrapper.capacity);
+        course.setCategory(wrapper.category);
+        course.setContent(wrapper.content);
+        course.setDuration(wrapper.duration);
+        course.setStatus(app.Util.Enums.Status.CURRENT);
+        course.setName(wrapper.name);
+        return crsService.createCourse(course);
     }
 }

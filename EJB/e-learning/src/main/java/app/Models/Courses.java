@@ -2,6 +2,8 @@ package app.Models;
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -10,8 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 
@@ -24,6 +25,7 @@ public class Courses {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long courseId;
     @NotNull
+    @Column(unique = true)
     private String name;
     @NotNull
     private double duration;
@@ -34,19 +36,21 @@ public class Courses {
     @Enumerated(EnumType.STRING)
     private Category category;
 
+    private boolean approvedByAdmin;
+
     @OneToMany(mappedBy = "course", fetch = FetchType.EAGER)
     private Set<Notifications> notifications;
 
     @OneToMany(mappedBy = "course")
     private Set<Reviews> courseReviews;
 
-    @ManyToMany
-    @JoinTable(
-        name = "course_user",
-        joinColumns = @JoinColumn(name = "courseId"),
-        inverseJoinColumns = @JoinColumn(name = "userId")
-    )
-    private Set<Students> students;
+    @ManyToOne
+    @JoinColumn(name = "userId")
+    private Instructors instructor;
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<CourseEnrollments> courseEnrollments;
+
     public Courses() {
     }
 
@@ -114,13 +118,6 @@ public class Courses {
         this.courseReviews = courseReviews;
     }
 
-    public Set<Students> getStudents() {
-        return students;
-    }
-
-    public void setStudents(Set<Students> students) {
-        this.students = students;
-    }
 
     public Category getCategory() {
         return category;
@@ -128,5 +125,31 @@ public class Courses {
 
     public void setCategory(Category category) {
         this.category = category;
+
     }
+
+    public boolean isApprovedByAdmin() {
+        return approvedByAdmin;
+    }
+
+    public void setApprovedByAdmin(boolean approvedByAdmin) {
+        this.approvedByAdmin = approvedByAdmin;
+    }
+
+    public Instructors getInstructor() {
+        return instructor;
+    }
+
+    public void setInstructor(Instructors instructor) {
+        this.instructor = instructor;
+    }
+
+    public Set<CourseEnrollments> getCourseEnrollments() {
+        return courseEnrollments;
+    }
+
+    public void setCourseEnrollments(Set<CourseEnrollments> courseEnrollments) {
+        this.courseEnrollments = courseEnrollments;
+    }
+
 }
