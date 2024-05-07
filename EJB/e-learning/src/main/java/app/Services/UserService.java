@@ -13,7 +13,7 @@ import app.Util.Validations.validateEmail;
 
 
 @Stateless
-public class AuthenticationService {
+public class UserService {
     public List<Users> login(String email, String password) {
         Session session = HibernateUtil.getSession();
         String hql = "FROM Users WHERE email = :email and password = :pass";
@@ -41,5 +41,25 @@ public class AuthenticationService {
             return false;
         }
         return true;
+    }
+
+    public Users getUser(Long id) {
+        Session session = null;
+        Users user = null;
+        try {
+            session = HibernateUtil.getSession();
+            user = session.get(Users.class, id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (session != null)
+                HibernateUtil.closeSession(session);
+        }
+        return user;
+    }
+
+    public List<Users> getUsers(){
+        Session session = HibernateUtil.getSession();
+        return session.createQuery("FROM Users", Users.class).getResultList();
     }
 }

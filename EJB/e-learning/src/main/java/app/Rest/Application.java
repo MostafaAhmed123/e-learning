@@ -16,9 +16,8 @@ import app.Models.Courses;
 import app.Models.Instructors;
 import app.Models.Students;
 import app.Models.Users;
-import app.Services.AuthenticationService;
+import app.Services.UserService;
 import app.Services.CourseService;
-import app.Services.InstructorService;
 import app.Util.DTOs.CourseDTO;
 import app.Util.DTOs.LoginRequest;
 import app.Util.DTOs.UserDTO;
@@ -29,13 +28,13 @@ import javax.ws.rs.QueryParam;
 @Produces(MediaType.APPLICATION_JSON)
 @Path("/")
 public class Application {
-    private AuthenticationService auth = new AuthenticationService();
+    private UserService userService = new UserService();
     private CourseService crsService = new CourseService();
-    private InstructorService instructorService = new InstructorService();
+
     @POST
     @Path("signup")
     public boolean addUser(UserDTO wrapper) {
-        return auth.signup(wrapper.isAdmin ? new Admins(wrapper.name, wrapper.password, wrapper.email, null, null)
+        return userService.signup(wrapper.isAdmin ? new Admins(wrapper.name, wrapper.password, wrapper.email, null, null)
                 : (wrapper.isInstructor
                         ? new Instructors(wrapper.name, wrapper.password, wrapper.email, wrapper.bio,
                                 wrapper.affiliation,
@@ -47,7 +46,7 @@ public class Application {
     @POST
     @Path("login")
     public Response login(LoginRequest request) {
-        List<Users> users = auth.login(request.email, request.password);
+        List<Users> users = userService.login(request.email, request.password);
         if (users != null && !users.isEmpty())
             return Response.ok(users.get(0)).build();
         else
@@ -60,10 +59,10 @@ public class Application {
     @Path("course")
     public boolean createCourse(CourseDTO wrapper){
         Courses course = new Courses();
-        Instructors instructor = instructorService.getInstructor(wrapper.instructorID);
-        if(instructor == null)
+        Users instructor = userService.getUser(wrapper.instructorID);
+        if(instructor == null || instructor.getUser_type() != "instructor")
             return false;
-        course.setInstructor(instructor);
+        course.setInstructor((Instructors) instructor);
         course.setApprovedByAdmin(false);
         course.setCapacity(wrapper.capacity);
         course.setCategory(wrapper.category);
@@ -90,5 +89,11 @@ public class Application {
     @Path("search")
     public List<Courses> search(@QueryParam(value = "course") String course, @QueryParam(value = "byName") boolean byName){
         return crsService.search(course, byName);
+    }
+
+    @GET
+    @Path("users")
+    public List<Users> getUsers(){
+        return userService.getUsers();
     }
 }

@@ -9,26 +9,11 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import app.Models.CourseEnrollments;
-import app.Models.Instructors;
 import app.Util.HibernateUtil;
 import app.Util.DTOs.EnrollmentRequestDTO;
 
 @Stateless
 public class InstructorService {
-    public Instructors getInstructor(Long id) {
-        Session session = null;
-        Instructors instructor = null;
-        try {
-            session = HibernateUtil.getSession();
-            instructor = session.get(Instructors.class, id);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (session != null)
-                HibernateUtil.closeSession(session);
-        }
-        return instructor;
-    }
 
     public List<CourseEnrollments> getEnrollmentRequests(Long courseId) {
         List<CourseEnrollments> enrollments = null;
