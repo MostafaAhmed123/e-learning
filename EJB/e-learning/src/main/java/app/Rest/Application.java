@@ -59,6 +59,8 @@ public class Application {
     public boolean createCourse(CourseDTO wrapper){
         Courses course = new Courses();
         Instructors instructor = instructorService.getInstructor(wrapper.instructorID);
+        if(instructor == null)
+            return false;
         course.setInstructor(instructor);
         course.setApprovedByAdmin(false);
         course.setCapacity(wrapper.capacity);

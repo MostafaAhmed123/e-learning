@@ -2,6 +2,7 @@ package app.Models;
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,7 +13,7 @@ import javax.validation.constraints.Size;
 @Entity
 @DiscriminatorValue("instructor")
 public class Instructors extends Users {
-    @OneToMany(mappedBy = "instructor", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "instructor", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Courses> courses;
     private int years_of_experience;
 
