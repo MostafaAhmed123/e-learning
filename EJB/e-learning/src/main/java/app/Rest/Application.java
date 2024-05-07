@@ -79,4 +79,16 @@ public class Application {
     public Courses getCourse(@QueryParam(value = "id") Long id){
         return crsService.getCourse(id);
     }
+
+    @GET
+    @Path("courses")
+    public List<Courses> getCourses(){
+        return crsService.getAllCourses();
+    }
+
+    @GET
+    @Path("search")
+    public List<Courses> search(@QueryParam(value = "course") String course, @QueryParam(value = "byName") boolean byName){
+        return crsService.search(course, byName);
+    }
 }

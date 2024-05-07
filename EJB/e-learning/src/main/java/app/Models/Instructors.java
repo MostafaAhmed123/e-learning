@@ -1,20 +1,16 @@
 package app.Models;
 
-import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
 @DiscriminatorValue("instructor")
 public class Instructors extends Users {
-    @OneToMany(mappedBy = "instructor", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Set<Courses> courses;
+    // @OneToMany(mappedBy = "instructor", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    // private Set<Courses> courses;
     private int years_of_experience;
 
     public Instructors() {}
@@ -33,13 +29,13 @@ public class Instructors extends Users {
         this.years_of_experience = years_of_experience;
     }
 
-    public Set<Courses> getCourses() {
-        return courses;
-    }
+    // public Set<Courses> getCourses() {
+    //     return courses;
+    // }
 
-    public void setCourses(Set<Courses> courses) {
-        this.courses = courses;
-    }
+    // public void setCourses(Set<Courses> courses) {
+    //     this.courses = courses;
+    // }
 
 
 }

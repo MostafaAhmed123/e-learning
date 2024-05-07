@@ -15,8 +15,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
-
-import app.Util.Enums.Category;
 import app.Util.Enums.Status;
 
 @Entity
@@ -33,18 +31,13 @@ public class Courses {
     private Long capacity;
     @Enumerated(EnumType.STRING)
     private Status status;
-    @Enumerated(EnumType.STRING)
-    private Category category;
+    private String category;
 
     private boolean approvedByAdmin;
 
-    @OneToMany(mappedBy = "course", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Set<Notifications> notifications;
 
-    @OneToMany(mappedBy = "course", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Set<Reviews> courseReviews;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userId")
     private Instructors instructor;
 
@@ -54,13 +47,13 @@ public class Courses {
     public Courses() {
     }
 
-    public Set<Notifications> getNotifications() {
-        return notifications;
-    }
+    // public Set<Notifications> getNotifications() {
+    //     return notifications;
+    // }
 
-    public void setNotifications(Set<Notifications> notifications) {
-        this.notifications = notifications;
-    }
+    // public void setNotifications(Set<Notifications> notifications) {
+    //     this.notifications = notifications;
+    // }
 
     public Long getCourseId() {
         return courseId;
@@ -110,20 +103,20 @@ public class Courses {
         this.status = status;
     }
 
-    public Set<Reviews> getCourseReviews() {
-        return courseReviews;
-    }
+    // public Set<Reviews> getCourseReviews() {
+    //     return courseReviews;
+    // }
 
-    public void setCourseReviews(Set<Reviews> courseReviews) {
-        this.courseReviews = courseReviews;
-    }
+    // public void setCourseReviews(Set<Reviews> courseReviews) {
+    //     this.courseReviews = courseReviews;
+    // }
 
 
-    public Category getCategory() {
+    public String getCategory() {
         return category;
     }
 
-    public void setCategory(Category category) {
+    public void setCategory(String category) {
         this.category = category;
 
     }

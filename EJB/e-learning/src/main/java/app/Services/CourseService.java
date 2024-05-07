@@ -25,7 +25,10 @@ public class CourseService {
         Courses course = null;
         try {
             session = HibernateUtil.getSession();
-            course = session.get(Courses.class, id);
+            String hql = "FROM Courses WHERE courseId = :id";
+            Query<Courses> query = session.createQuery(hql, Courses.class);
+            query.setParameter("id", id);
+            course = query.uniqueResult();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -37,9 +40,9 @@ public class CourseService {
 
     private boolean isCourseExist(String name) {
         Session session = HibernateUtil.getSession();
-        String hql = "FROM Courses WHERE name = :name AND c.approvedByAdmin = true";
+        String hql = "FROM Courses c WHERE name = :tmp AND c.approvedByAdmin = true";
         Query<Courses> query = session.createQuery(hql, Courses.class);
-        query.setParameter("name", name);
+        query.setParameter("tmp", name);
         return query.getResultList().size() > 0;
     }
 
@@ -72,11 +75,11 @@ public class CourseService {
             if (byName) {
                 hql = "FROM Courses c WHERE c.name LIKE :searchTerm AND c.approvedByAdmin = true";
                 query = session.createQuery(hql, Courses.class);
-                query.setParameter("searchTerm", searchTerm);
+                query.setParameter("searchTerm", "%" + searchTerm + "%");
             } else {
-                hql = "FROM Courses c WHERE c.category = :searchTerm AND c.approvedByAdmin = true";
+                hql = "FROM Courses c WHERE c.category LIKE :searchTerm AND c.approvedByAdmin = true";
                 query = session.createQuery(hql, Courses.class);
-                query.setParameter("searchTerm", app.Util.Enums.Category.valueOf(searchTerm));
+                query.setParameter("searchTerm", "%" + searchTerm + "%");
             }
             courses = query.getResultList();
         } catch (Exception e) {
