@@ -33,7 +33,7 @@ public class CourseService {
             e.printStackTrace();
         } finally {
             if (session != null)
-                session.close();
+                HibernateUtil.closeSession(session);
         }
         return course != null && course.getApprovedByAdmin() ? course : null;
     }
@@ -55,7 +55,7 @@ public class CourseService {
                 return false;
             session.save(course);
             transaction.commit();
-            session.close();
+            HibernateUtil.closeSession(session);
         } catch (Exception e) {
             if (transaction != null)
                 transaction.rollback();
@@ -86,7 +86,7 @@ public class CourseService {
             System.out.println("Error in search " + e.getMessage());
         } finally {
             if (session != null)
-                session.close();
+                HibernateUtil.closeSession(session);
         }
         return courses;
     }
@@ -100,7 +100,9 @@ public class CourseService {
         } catch (Exception e) {
             System.out.println("Error in Browsing " + e.getMessage());
         } finally {
-            session.close();
+            if (session != null) {
+                HibernateUtil.closeSession(session);
+            }
         }
         return courses;
     }

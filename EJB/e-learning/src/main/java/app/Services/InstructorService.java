@@ -25,7 +25,7 @@ public class InstructorService {
             e.printStackTrace();
         } finally {
             if (session != null)
-                session.close();
+                HibernateUtil.closeSession(session);
         }
         return instructor;
     }
@@ -43,7 +43,7 @@ public class InstructorService {
             e.printStackTrace();
         } finally {
             if (session != null)
-                session.close();
+                HibernateUtil.closeSession(session);
         }
         return enrollments;
     }
@@ -72,7 +72,7 @@ public class InstructorService {
         // TODO notify student about enrollment's update
         transaction.commit();
 
-        session.close();
+        HibernateUtil.closeSession(session);
         return true;
 
     }

@@ -33,7 +33,7 @@ public class AuthenticationService {
             transaction = session.beginTransaction();
             session.save(wrapper);
             transaction.commit();
-            session.close();
+            HibernateUtil.closeSession(session);
         } catch (Exception e) {
             if (transaction != null)
                 transaction.rollback();
