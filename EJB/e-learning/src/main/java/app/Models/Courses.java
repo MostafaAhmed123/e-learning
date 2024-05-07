@@ -128,7 +128,7 @@ public class Courses {
 
     }
 
-    public boolean isApprovedByAdmin() {
+    public boolean getApprovedByAdmin() {
         return approvedByAdmin;
     }
 

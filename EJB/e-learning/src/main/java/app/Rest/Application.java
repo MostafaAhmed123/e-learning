@@ -5,6 +5,7 @@ package app.Rest;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
@@ -22,6 +23,7 @@ import app.Util.DTOs.CourseDTO;
 import app.Util.DTOs.LoginRequest;
 import app.Util.DTOs.UserDTO;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -70,5 +72,11 @@ public class Application {
         course.setStatus(app.Util.Enums.Status.CURRENT);
         course.setName(wrapper.name);
         return crsService.createCourse(course);
+    }
+
+    @GET
+    @Path("course")
+    public Courses getCourse(@QueryParam(value = "id") Long id){
+        return crsService.getCourse(id);
     }
 }

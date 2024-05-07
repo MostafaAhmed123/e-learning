@@ -32,7 +32,7 @@ public class CourseService {
             if (session != null)
                 session.close();
         }
-        return course.isApprovedByAdmin() ? course : null;
+        return course != null && course.getApprovedByAdmin() ? course : null;
     }
 
     private boolean isCourseExist(String name) {
@@ -74,7 +74,7 @@ public class CourseService {
                 query = session.createQuery(hql, Courses.class);
                 query.setParameter("searchTerm", searchTerm);
             } else {
-                hql = "FROM Courses c WHERE c.category LIKE :searchTerm AND c.approvedByAdmin = true";
+                hql = "FROM Courses c WHERE c.category = :searchTerm AND c.approvedByAdmin = true";
                 query = session.createQuery(hql, Courses.class);
                 query.setParameter("searchTerm", app.Util.Enums.Category.valueOf(searchTerm));
             }
