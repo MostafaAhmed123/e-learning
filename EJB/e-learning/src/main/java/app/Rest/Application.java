@@ -96,4 +96,10 @@ public class Application {
     public List<Users> getUsers(){
         return userService.getUsers();
     }
+
+    @GET
+    @Path("user")
+    public Users getUser(@QueryParam(value = "id") Long id){
+        return userService.getUser(id);
+    }
 }
