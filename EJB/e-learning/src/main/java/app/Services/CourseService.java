@@ -79,7 +79,7 @@ public class CourseService {
             } else {
                 hql = "FROM Courses c WHERE c.category LIKE :searchTerm AND c.approvedByAdmin = true";
                 query = session.createQuery(hql, Courses.class);
-                query.setParameter("searchTerm", "%" + searchTerm + "%");
+                query.setParameter("searchTerm", searchTerm);
             }
             courses = query.getResultList();
         } catch (Exception e) {

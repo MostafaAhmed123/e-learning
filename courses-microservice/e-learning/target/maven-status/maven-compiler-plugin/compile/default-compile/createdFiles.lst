@@ -1,0 +1,8 @@
+app\Entities\Reviews.class
+app\Util\HibernateUtil.class
+app\Entities\Courses.class
+app\Services\CourseService.class
+app\Util\DTOs\CourseDTO.class
+app\Util\Enums\Status.class
+app\Rest\App.class
+app\Rest\Application.class
