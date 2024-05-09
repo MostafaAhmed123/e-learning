@@ -21,9 +21,7 @@ public class HibernateUtil {
                 configuration.addAnnotatedClass(Users.class);
                 configuration.addAnnotatedClass(Instructors.class);
                 configuration.addAnnotatedClass(Students.class);
-                configuration.addAnnotatedClass(Courses.class);
                 configuration.addAnnotatedClass(Notifications.class);
-                configuration.addAnnotatedClass(Reviews.class);
                 configuration.addAnnotatedClass(Admins.class);
                 configuration.addAnnotatedClass(CourseEnrollments.class);
                 ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()

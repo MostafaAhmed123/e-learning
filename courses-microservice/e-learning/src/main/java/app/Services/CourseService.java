@@ -8,6 +8,10 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
 
 import org.hibernate.Transaction;
 
@@ -47,13 +51,13 @@ public class CourseService {
         return query.getResultList().size() > 0;
     }
 
-    public boolean delete(Long id){
+    public boolean delete(Long id) {
         Transaction transaction = null;
         try {
             Session session = HibernateUtil.getSession();
             transaction = session.beginTransaction();
             Courses course = this.getCourse(id);
-            if(course == null)
+            if (course == null)
                 return false;
             session.delete(course);
             transaction.commit();
@@ -98,9 +102,14 @@ public class CourseService {
     public boolean createCourse(Courses course) {
         Transaction transaction = null;
         try {
+            Client client = ClientBuilder.newClient();
+            WebTarget target = client.target("http://localhost:5000")
+                    .path("usertype")
+                    .queryParam("id", course.getInstructorId());
+            String response = target.request(MediaType.APPLICATION_JSON).get(String.class);
             Session session = HibernateUtil.getSession();
             transaction = session.beginTransaction();
-            if (isCourseExist(course.getName()))
+            if (isCourseExist(course.getName()) || !response.equals("instructor"))
                 return false;
             session.save(course);
             transaction.commit();
@@ -154,6 +163,13 @@ public class CourseService {
             }
         }
         return courses;
+    }
+
+    public Long getCourseCapacity(Long id) {
+        Courses course = this.getCourse(id);
+        if (course == null)
+            return -1L;
+        return course.getCapacity();
     }
 
     public List<Courses> getAllCoursesSortedByRating() {

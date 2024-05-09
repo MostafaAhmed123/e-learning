@@ -1,7 +1,5 @@
 package app.Rest;
 
-
-
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -30,12 +28,9 @@ public class Application {
 
     @POST
     @Path("course")
-    public boolean createCourse(CourseDTO wrapper){
+    public boolean createCourse(CourseDTO wrapper) {
         Courses course = new Courses();
-        // Users instructor = userService.getUser(wrapper.instructorID);
-        // if(instructor == null || instructor.getUser_type() != "instructor")
-            // return false;
-            // TODO check instructor id is a real instructor id
+
         course.setInstructorId(wrapper.instructorID);
         course.setApprovedByAdmin(false);
         course.setCapacity(wrapper.capacity);
@@ -49,40 +44,41 @@ public class Application {
 
     @GET
     @Path("course")
-    public Courses getCourse(@QueryParam(value = "id") Long id){
+    public Courses getCourse(@QueryParam(value = "id") Long id) {
         return crsService.getCourse(id);
     }
 
     @GET
     @Path("courses")
-    public List<Courses> getCourses(){
+    public List<Courses> getCourses() {
         return crsService.getAllCourses();
     }
 
     @GET
     @Path("search")
-    public List<Courses> search(@QueryParam(value = "course") String course, @QueryParam(value = "byName") boolean byName){
+    public List<Courses> search(@QueryParam(value = "course") String course,
+            @QueryParam(value = "byName") boolean byName) {
         return crsService.search(course, byName);
     }
 
     @DELETE
-    @Path("course/{id}")
-    public boolean delete(Long id){
+    @Path("course")
+    public boolean delete(@QueryParam(value = "id") Long id) {
         return crsService.delete(id);
     }
 
     @PUT
     @Path("update")
-    public boolean update(CourseDTO course){
+    public boolean update(CourseDTO course) {
         return crsService.updateCourse(course);
     }
 
     @GET
     @Path("makereview")
-    public boolean makeReview(ReviewDTO wrapper){
+    public boolean makeReview(ReviewDTO wrapper) {
         Reviews review = new Reviews();
         Courses course = crsService.getCourse(wrapper.courseId);
-        if(course == null)
+        if (course == null)
             return false;
         review.setCourse(course);
         review.setRating(wrapper.rating);
@@ -90,4 +86,11 @@ public class Application {
         review.setStudentId(wrapper.studentId);
         return reviewService.makeReview(review);
     }
+
+    @GET
+    @Path("capacity")
+    public Long getCapacity(@QueryParam(value = "id") Long id) {
+        return crsService.getCourseCapacity(id);
+    }
+
 }

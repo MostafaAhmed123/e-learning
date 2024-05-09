@@ -36,6 +36,12 @@ public class ReviewService {
         try {
             Session session = HibernateUtil.getSession();
             transaction = session.beginTransaction();
+            String hql = "FROM Reviews r WHERE r.studentId = :id";
+            Query<Reviews> query = session.createQuery(hql, Reviews.class);
+            query.setParameter("id", review.getStudentId());
+            List<Reviews> tmp = query.getResultList();
+            if(!tmp.isEmpty())
+                return false;
             session.save(review);
             transaction.commit();
             HibernateUtil.closeSession(session);

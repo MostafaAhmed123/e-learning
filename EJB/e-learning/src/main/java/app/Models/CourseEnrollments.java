@@ -22,10 +22,7 @@ public class CourseEnrollments {
     @JoinColumn(name = "userId")
     private Students student;
 
-    @MapsId("courseId")
-    @ManyToOne
-    @JoinColumn(name = "courseId")
-    private Courses course;
+    private Long course;
 
     @Enumerated(EnumType.STRING)
     private RequestStatus status;
@@ -38,11 +35,11 @@ public class CourseEnrollments {
         this.student = student;
     }
 
-    public Courses getCourse() {
+    public Long getCourse() {
         return course;
     }
 
-    public void setCourse(Courses course) {
+    public void setCourse(Long course) {
         this.course = course;
     }
 

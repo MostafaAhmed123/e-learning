@@ -12,7 +12,7 @@
     - `removeCourse(courseId)`: Remove a course.
     - `trackPlatformUsage()`: Track platform usage by students and instructors.
 
-## Instructor Management
+## Instructor Management DONE
 
 - Type: Stateless Session Bean
 - Name: `InstructorManagementBean`
@@ -29,7 +29,6 @@
     - `viewEnrollments()`: View current and past course enrollments.
     - `enrollCourse(courseId)`: Enroll in a course.
     - `cancelEnrollment(enrollmentId)`: Cancel course enrollment.
-    - `makeReviewAndRating(courseId, reviewRating)`: Make a review and rating for a course.
     - `getCourseUpdates()`: Get notified for course enrollment updates.
 
 ## Enrollment and Notification Management
@@ -38,13 +37,11 @@
 - Name: `EnrollmentNotificationBean`
 - Description:
   - Methods:
-    - `enrollCourse(courseId)`: Enroll in a course.
-    - `cancelEnrollment(enrollmentId)`: Cancel course enrollment.
     - `sendNotifications()`: Send notifications for course enrollment updates.
 
 # Microservices
 
-## Course Management Microservice
+## Course Management Microservice DONE
 
 - Type: RESTful Microservice
 - Name: `CourseManagementService`
@@ -55,8 +52,10 @@
     - `PUT /courses/{courseId}`: Update course details.
     - `DELETE /courses/{courseId}`: Remove a course.
     - `GET /courses/search?name={name}&category={category}&sort={sortCriteria}`: Search courses by name, category, or sort by ratings.
+    - `POST /review`: Create a new review.
+    - `GET /reviews`: get course reviews.
 
-## User Management Microservice
+## User Management Microservice DONE
 
 - Type: RESTful Microservice
 - Name: `UserManagementService`
@@ -67,3 +66,4 @@
     - `PUT /users/{userId}`: Update user account details.
     - `DELETE /users/{userId}`: Remove a user account.
     - `GET /users`: Get all user accounts
+    - `GET /usertype`: Get the type of a user

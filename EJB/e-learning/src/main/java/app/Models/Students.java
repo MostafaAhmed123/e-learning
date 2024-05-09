@@ -19,8 +19,6 @@ public class Students extends Users {
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<CourseEnrollments> courseEnrollments;
 
-    @OneToMany(mappedBy = "student", fetch = FetchType.EAGER)
-    private Set<Reviews> reviews;
 
     public Students(){}
 
@@ -37,16 +35,6 @@ public class Students extends Users {
 
     public void setNotifications(Set<Notifications> notifications) {
         this.notifications = notifications;
-    }
-
-
-
-    public Set<Reviews> getReviews() {
-        return reviews;
-    }
-
-    public void setReviews(Set<Reviews> reviews) {
-        this.reviews = reviews;
     }
 
 

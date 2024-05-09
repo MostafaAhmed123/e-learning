@@ -12,13 +12,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import app.Models.Admins;
-import app.Models.Courses;
 import app.Models.Instructors;
 import app.Models.Students;
 import app.Models.Users;
 import app.Services.UserService;
-import app.Services.CourseService;
-import app.Util.DTOs.CourseDTO;
 import app.Util.DTOs.LoginRequest;
 import app.Util.DTOs.UserDTO;
 import javax.ws.rs.Produces;
@@ -29,7 +26,6 @@ import javax.ws.rs.QueryParam;
 @Path("/")
 public class Application {
     private UserService userService = new UserService();
-    private CourseService crsService = new CourseService();
 
     @POST
     @Path("signup")
@@ -55,41 +51,6 @@ public class Application {
                     .build();
     }
 
-    @POST
-    @Path("course")
-    public boolean createCourse(CourseDTO wrapper){
-        Courses course = new Courses();
-        Users instructor = userService.getUser(wrapper.instructorID);
-        if(instructor == null || instructor.getUser_type() != "instructor")
-            return false;
-        course.setInstructor((Instructors) instructor);
-        course.setApprovedByAdmin(false);
-        course.setCapacity(wrapper.capacity);
-        course.setCategory(wrapper.category);
-        course.setContent(wrapper.content);
-        course.setDuration(wrapper.duration);
-        course.setStatus(app.Util.Enums.Status.CURRENT);
-        course.setName(wrapper.name);
-        return crsService.createCourse(course);
-    }
-
-    @GET
-    @Path("course")
-    public Courses getCourse(@QueryParam(value = "id") Long id){
-        return crsService.getCourse(id);
-    }
-
-    @GET
-    @Path("courses")
-    public List<Courses> getCourses(){
-        return crsService.getAllCourses();
-    }
-
-    @GET
-    @Path("search")
-    public List<Courses> search(@QueryParam(value = "course") String course, @QueryParam(value = "byName") boolean byName){
-        return crsService.search(course, byName);
-    }
 
     @GET
     @Path("users")

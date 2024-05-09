@@ -17,9 +17,10 @@ public class Notifications {
     @JoinColumn(name = "userId")
     private Students student;
 
-    @ManyToOne
-    @JoinColumn(name = "courseId")
-    private Courses course;
+    // TODO replace it with enrollment id
+    // @ManyToOne
+    // @JoinColumn(name = "courseId")
+    // private Courses course;
     public Notifications() {}
     private String notification;
     public Long getNotificationId() {
@@ -34,12 +35,12 @@ public class Notifications {
     public void setStudent(Students student) {
         this.student = student;
     }
-    public Courses getCourse() {
-        return course;
-    }
-    public void setCourse(Courses course) {
-        this.course = course;
-    }
+    // public Courses getCourse() {
+    //     return course;
+    // }
+    // public void setCourse(Courses course) {
+    //     this.course = course;
+    // }
     public String getNotification() {
         return notification;
     }
