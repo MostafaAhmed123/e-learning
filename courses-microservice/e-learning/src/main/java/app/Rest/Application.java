@@ -38,6 +38,7 @@ public class Application {
         course.setContent(wrapper.content);
         course.setDuration(wrapper.duration);
         course.setStatus(app.Util.Enums.Status.CURRENT);
+        course.setPopularity(0L);
         course.setName(wrapper.name);
         return crsService.createCourse(course);
     }

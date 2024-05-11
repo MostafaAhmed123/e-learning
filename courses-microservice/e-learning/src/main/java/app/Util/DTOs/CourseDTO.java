@@ -11,5 +11,6 @@ public class CourseDTO {
     public String category;
     public Long instructorID;
     public Status status;
+    public Long popularity;
     public boolean approved;
 }

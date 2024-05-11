@@ -11,7 +11,12 @@ import javax.ws.rs.core.MediaType;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
-
+import javax.ws.rs.client.Entity;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import javax.ws.rs.core.Response;
 import app.Models.CourseEnrollments;
 import app.Util.HibernateUtil;
 import app.Util.DTOs.EnrollmentRequestDTO;
@@ -61,19 +66,40 @@ public class InstructorService {
         Transaction transaction = session.beginTransaction();
         Client client = ClientBuilder.newClient();
         WebTarget target = client.target("http://localhost:8080")
-                .path("course-microservice/api/capacity")
+                .path("course-microservice/api/course")
                 .queryParam("id", enrollment.getId().getCourseId());
-        Long response = target.request(MediaType.APPLICATION_JSON).get(Long.class);
-        enrollment.setStatus((wrapper.accept
-                && response > enrollments.size())
-                        ? app.Util.Enums.RequestStatus.ACCEPTED
-                        : app.Util.Enums.RequestStatus.REUECTED);
-        session.update(enrollment);
-        // TODO notify student about enrollment's update
-        client.close();
-        transaction.commit();
-
-        HibernateUtil.closeSession(session);
+        String response = target.request(MediaType.APPLICATION_JSON).get(String.class);
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonResponse;
+        try {
+            jsonResponse = objectMapper.readTree(response);
+            Long capacity = jsonResponse.get("capacity").asLong();
+            Long popularity = jsonResponse.get("popularity").asLong();
+            enrollment.setStatus((wrapper.accept
+                    && capacity > enrollments.size())
+                            ? app.Util.Enums.RequestStatus.ACCEPTED
+                            : app.Util.Enums.RequestStatus.REUECTED);
+            session.update(enrollment);
+            if(wrapper.accept){
+                popularity++;
+                ((ObjectNode) jsonResponse).put("popularity", popularity);
+                String updatedJsonString = objectMapper.writeValueAsString(jsonResponse);
+                target = client.target("http://localhost:8080").path("course-microservice/api/course");
+                Response res = target.request(MediaType.APPLICATION_JSON)
+                .post(Entity.entity(updatedJsonString, MediaType.APPLICATION_JSON));
+                if(res.getStatus() != 200)
+                    throw new Exception("responce code: " + res.getStatus()) ;
+            }
+            // TODO notify student about enrollment's update
+            client.close();
+            transaction.commit();
+            HibernateUtil.closeSession(session);
+        } catch (Exception e) {
+            if(transaction != null)
+                transaction.rollback();
+            e.printStackTrace();
+            return false;
+        }
         return true;
 
     }

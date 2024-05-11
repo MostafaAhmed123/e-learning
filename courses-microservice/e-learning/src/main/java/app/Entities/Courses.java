@@ -31,6 +31,15 @@ public class Courses {
     @Enumerated(EnumType.STRING)
     private Status status;
     private String category;
+    public Long getPopularity() {
+        return popularity;
+    }
+
+    public void setPopularity(Long popularity) {
+        this.popularity = popularity;
+    }
+
+    private Long popularity;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Reviews> course_reviews;

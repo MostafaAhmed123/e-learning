@@ -88,6 +88,7 @@ public class CourseService {
             course.setContent(updatedCourse.content);
             course.setDuration(updatedCourse.duration);
             course.setStatus(updatedCourse.status);
+            course.setPopularity(updatedCourse.popularity);
             course.setName(updatedCourse.name);
             session.update(course);
             transaction.commit();
