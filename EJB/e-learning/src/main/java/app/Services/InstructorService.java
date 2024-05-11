@@ -60,10 +60,13 @@ public class InstructorService {
             return false;
         Transaction transaction = session.beginTransaction();
         Client client = ClientBuilder.newClient();
-        WebTarget target = client.target("http://localhost:9091")
+        WebTarget target = client.target("http://localhost:8080")
                 .path("course-microservice/api/capacity")
                 .queryParam("id", enrollment.getCourse());
         Long response = target.request(MediaType.APPLICATION_JSON).get(Long.class);
+        // ObjectMapper objectMapper = new ObjectMapper();
+        // JsonNode jsonResponse = objectMapper.readTree(response);
+        // String role = jsonResponse.get("capacity").asLong();
         enrollment.setStatus((wrapper.accept
                 && response > enrollments.size())
                         ? app.Util.Enums.RequestStatus.ACCEPTED

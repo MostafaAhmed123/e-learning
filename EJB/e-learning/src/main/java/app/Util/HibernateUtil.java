@@ -18,11 +18,7 @@ public class HibernateUtil {
             try {
                 Configuration configuration = new Configuration();
                 configuration.configure("hibernate.cfg.xml");
-                configuration.addAnnotatedClass(Users.class);
-                configuration.addAnnotatedClass(Instructors.class);
-                configuration.addAnnotatedClass(Students.class);
                 configuration.addAnnotatedClass(Notifications.class);
-                configuration.addAnnotatedClass(Admins.class);
                 configuration.addAnnotatedClass(CourseEnrollments.class);
                 ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                         .applySettings(configuration.getProperties()).build();

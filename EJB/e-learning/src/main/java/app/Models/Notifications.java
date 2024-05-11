@@ -4,8 +4,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
 @Entity
 public class Notifications {
@@ -13,9 +11,7 @@ public class Notifications {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long notificationId;
 
-    @ManyToOne
-    @JoinColumn(name = "userId")
-    private Students student;
+    private Long studentId;
 
     // TODO replace it with enrollment id
     // @ManyToOne
@@ -29,11 +25,11 @@ public class Notifications {
     public void setNotificationId(Long notificationId) {
         this.notificationId = notificationId;
     }
-    public Students getStudent() {
-        return student;
+    public Long getStudentId() {
+        return studentId;
     }
-    public void setStudent(Students student) {
-        this.student = student;
+    public void setStudentId(Long student) {
+        this.studentId = student;
     }
     // public Courses getCourse() {
     //     return course;

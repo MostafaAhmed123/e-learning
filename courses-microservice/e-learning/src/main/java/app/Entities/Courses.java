@@ -25,7 +25,7 @@ public class Courses {
     @Column(unique = true)
     private String name;
     @NotNull
-    private double duration;
+    private int duration;
     private String content;
     private Long capacity;
     @Enumerated(EnumType.STRING)
@@ -57,11 +57,11 @@ public class Courses {
         this.name = name;
     }
 
-    public double getDuration() {
+    public int getDuration() {
         return duration;
     }
 
-    public void setDuration(double duration) {
+    public void setDuration(int duration) {
         this.duration = duration;
     }
 

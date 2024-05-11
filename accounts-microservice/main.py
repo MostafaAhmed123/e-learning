@@ -9,7 +9,7 @@ import re
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = (
-    "mysql+mysqlconnector://root:mostafa@localhost:3306/users"
+    "mysql://root:mostafa@localhost:3306/users"
 )
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
@@ -38,7 +38,7 @@ class User(db.Model):
 EMAIL_REGEX_PATTERN = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
 
 
-@app.route("/login", methods=["POST"])
+@app.route("/users/login", methods=["POST"])
 def login():
     data = request.json
     if not data or not all(key in data for key in ["email", "password"]):
@@ -53,7 +53,7 @@ def login():
         abort(401, "Invalid email or password")
 
     if not user.check_password(password):
-        abort(401, "Invalid email or password tmp")
+        abort(401, "Invalid email or password")
 
     user_data = {
         "id": user.id,

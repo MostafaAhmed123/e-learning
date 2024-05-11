@@ -6,10 +6,6 @@
 - Name: `AdminManagementBean`
 - Description:
   - Methods:
-    - `viewUserAccounts()`: View and manage user accounts, including students and instructors.
-    - `reviewCourseContent(courseId)`: Review course content before it's published.
-    - `editCourse(courseDetails)`: Edit course details.
-    - `removeCourse(courseId)`: Remove a course.
     - `trackPlatformUsage()`: Track platform usage by students and instructors.
 
 ## Instructor Management DONE
@@ -18,7 +14,7 @@
 - Name: `InstructorManagementBean`
 - Description:
   - Methods:
-    - `acceptRejectEnrollment(enrollmentId, decision)`: Accept or reject student enrollments.
+    - `acceptRejectEnrollment(enrollmentId, decision)`: Accept or reject student enrollments, and send notification to student.
 
 ## Student Management
 
@@ -30,14 +26,6 @@
     - `enrollCourse(courseId)`: Enroll in a course.
     - `cancelEnrollment(enrollmentId)`: Cancel course enrollment.
     - `getCourseUpdates()`: Get notified for course enrollment updates.
-
-## Enrollment and Notification Management
-
-- Type: Stateless Session Bean
-- Name: `EnrollmentNotificationBean`
-- Description:
-  - Methods:
-    - `sendNotifications()`: Send notifications for course enrollment updates.
 
 # Microservices
 

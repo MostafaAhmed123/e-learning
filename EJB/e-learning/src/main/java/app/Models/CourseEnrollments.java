@@ -6,9 +6,6 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
 
 import app.Util.Enums.RequestStatus;
 
@@ -17,21 +14,18 @@ public class CourseEnrollments {
     @EmbeddedId
     private CourseEnrollmentId id;
 
-    @MapsId("userId")
-    @ManyToOne
-    @JoinColumn(name = "userId")
-    private Students student;
+    private Long student;
 
     private Long course;
 
     @Enumerated(EnumType.STRING)
     private RequestStatus status;
 
-    public Students getStudent() {
+    public Long getStudent() {
         return student;
     }
 
-    public void setStudent(Students student) {
+    public void setStudent(Long student) {
         this.student = student;
     }
 

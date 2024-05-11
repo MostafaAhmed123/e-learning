@@ -5,7 +5,7 @@ import app.Util.Enums.Status;
 public class CourseDTO {
     public Long id;
     public String name;
-    public double duration;
+    public int duration;
     public String content;
     public Long capacity;
     public String category;

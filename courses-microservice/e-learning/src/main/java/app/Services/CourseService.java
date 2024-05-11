@@ -7,6 +7,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
 import javax.persistence.criteria.Root;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -106,10 +108,14 @@ public class CourseService {
             WebTarget target = client.target("http://localhost:5000")
                     .path("usertype")
                     .queryParam("id", course.getInstructorId());
-            String response = target.request(MediaType.APPLICATION_JSON).get(String.class);
+                String response = target.request(MediaType.APPLICATION_JSON).get(String.class);
+                System.out.println(response);
             Session session = HibernateUtil.getSession();
             transaction = session.beginTransaction();
-            if (isCourseExist(course.getName()) || !response.equals("instructor"))
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonResponse = objectMapper.readTree(response);
+            String role = jsonResponse.get("role").asText();
+            if (isCourseExist(course.getName()) || !role.equals("instructor"))
                 return false;
             session.save(course);
             transaction.commit();
