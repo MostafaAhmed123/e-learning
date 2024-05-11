@@ -22,9 +22,9 @@
 - Name: `StudentManagementBean`
 - Description:
   - Methods:
-    - `viewEnrollments()`: View current and past course enrollments.
-    - `enrollCourse(courseId)`: Enroll in a course.
-    - `cancelEnrollment(enrollmentId)`: Cancel course enrollment.
+    - `viewEnrollments()`: View current and past course enrollments. PARTAILLY DONE
+    - `enrollCourse(courseId)`: Enroll in a course. DONE
+    - `cancelEnrollment(enrollmentId)`: Cancel course enrollment. DONE
     - `getCourseUpdates()`: Get notified for course enrollment updates.
 
 # Microservices

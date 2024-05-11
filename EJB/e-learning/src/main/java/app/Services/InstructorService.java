@@ -44,12 +44,12 @@ public class InstructorService {
 
         try {
             String hql = "SELECT ce FROM CourseEnrollments ce " +
-                    "WHERE ce.course = :courseId AND ce.student.studentId = :studentId";
+                    "WHERE ce.id.courseId = :courseId AND ce.id.userId = :studentId";
             Query<CourseEnrollments> query = session.createQuery(hql, CourseEnrollments.class);
             query.setParameter("courseId", wrapper.courseId);
             query.setParameter("studentId", wrapper.studentId);
             enrollment = query.uniqueResult();
-            hql = "FROM CourseEnrollments WHERE course = :id";
+            hql = "FROM CourseEnrollments WHERE id.courseId = :id";
             query = session.createQuery(hql, CourseEnrollments.class);
             query.setParameter("id", wrapper.courseId);
             enrollments = query.getResultList();
@@ -62,11 +62,8 @@ public class InstructorService {
         Client client = ClientBuilder.newClient();
         WebTarget target = client.target("http://localhost:8080")
                 .path("course-microservice/api/capacity")
-                .queryParam("id", enrollment.getCourse());
+                .queryParam("id", enrollment.getId().getCourseId());
         Long response = target.request(MediaType.APPLICATION_JSON).get(Long.class);
-        // ObjectMapper objectMapper = new ObjectMapper();
-        // JsonNode jsonResponse = objectMapper.readTree(response);
-        // String role = jsonResponse.get("capacity").asLong();
         enrollment.setStatus((wrapper.accept
                 && response > enrollments.size())
                         ? app.Util.Enums.RequestStatus.ACCEPTED
