@@ -1,6 +1,6 @@
 # EJBs
 
-## Admin Management
+## Admin Management DONE
 
 - Type: Stateless Session Bean
 - Name: `AdminManagementBean`
@@ -16,15 +16,15 @@
   - Methods:
     - `acceptRejectEnrollment(enrollmentId, decision)`: Accept or reject student enrollments, and send notification to student.
 
-## Student Management
+## Student Management DONE
 
 - Type: Stateless Session Bean
 - Name: `StudentManagementBean`
 - Description:
   - Methods:
-    - `viewEnrollments()`: View current and past course enrollments. PARTAILLY DONE
-    - `enrollCourse(courseId)`: Enroll in a course. DONE
-    - `cancelEnrollment(enrollmentId)`: Cancel course enrollment. DONE
+    - `viewEnrollments()`: View current and past course enrollments.
+    - `enrollCourse(courseId)`: Enroll in a course.
+    - `cancelEnrollment(enrollmentId)`: Cancel course enrollment.
     - `getCourseUpdates()`: Get notified for course enrollment updates.
 
 # Microservices

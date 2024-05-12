@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import javax.ws.rs.core.Response;
 import app.Models.CourseEnrollments;
+import app.Models.Notifications;
 import app.Util.HibernateUtil;
 import app.Util.DTOs.EnrollmentRequestDTO;
 
@@ -79,22 +80,28 @@ public class InstructorService {
                             ? app.Util.Enums.RequestStatus.ACCEPTED
                             : app.Util.Enums.RequestStatus.REUECTED);
             session.update(enrollment);
-            if(wrapper.accept){
+            if (wrapper.accept) {
                 popularity++;
                 ((ObjectNode) jsonResponse).put("popularity", popularity);
                 String updatedJsonString = objectMapper.writeValueAsString(jsonResponse);
                 target = client.target("http://localhost:8080").path("course-microservice/api/course");
                 Response res = target.request(MediaType.APPLICATION_JSON)
-                .put(Entity.entity(updatedJsonString, MediaType.APPLICATION_JSON));
-                if(res.getStatus() != 200)
-                    throw new Exception("responce code: " + res.getStatus()) ;
+                        .put(Entity.entity(updatedJsonString, MediaType.APPLICATION_JSON));
+                if (res.getStatus() != 200)
+                    throw new Exception("responce code: " + res.getStatus());
             }
-            // TODO notify student about enrollment's update
+            Notifications notification = new Notifications();
+            notification.setStudentId(wrapper.studentId);
+            notification.setNotification("your enrollment request to course " + wrapper.courseId + " has been "
+                    + (wrapper.accept ? "accepted" : "rejected"));
+            NotificationService service = new NotificationService();
+            if (service.createNotification(notification))
+                throw new Exception("notification cannot be created");
             client.close();
             transaction.commit();
             HibernateUtil.closeSession(session);
         } catch (Exception e) {
-            if(transaction != null)
+            if (transaction != null)
                 transaction.rollback();
             e.printStackTrace();
             return false;
