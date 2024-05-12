@@ -85,7 +85,7 @@ public class InstructorService {
                 String updatedJsonString = objectMapper.writeValueAsString(jsonResponse);
                 target = client.target("http://localhost:8080").path("course-microservice/api/course");
                 Response res = target.request(MediaType.APPLICATION_JSON)
-                .post(Entity.entity(updatedJsonString, MediaType.APPLICATION_JSON));
+                .put(Entity.entity(updatedJsonString, MediaType.APPLICATION_JSON));
                 if(res.getStatus() != 200)
                     throw new Exception("responce code: " + res.getStatus()) ;
             }

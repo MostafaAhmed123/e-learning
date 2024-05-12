@@ -81,7 +81,7 @@ public class Application {
         Courses course = crsService.getCourse(wrapper.courseId);
         if (course == null)
             return false;
-        review.setCourse(course);
+        // review.setCourse(course);
         review.setRating(wrapper.rating);
         review.setReviewText(wrapper.review);
         review.setStudentId(wrapper.studentId);
@@ -92,6 +92,18 @@ public class Application {
     @Path("capacity")
     public Long getCapacity(@QueryParam(value = "id") Long id) {
         return crsService.getCourseCapacity(id);
+    }
+
+    @GET
+    @Path("reviews")
+    public List<Reviews> getReviews(@QueryParam(value = "id") Long id){
+        return reviewService.getReviews(id);
+    }
+
+    @GET
+    @Path("reviews")
+    public List<Reviews> getReviews(){
+        return reviewService.getReviews();
     }
 
 }

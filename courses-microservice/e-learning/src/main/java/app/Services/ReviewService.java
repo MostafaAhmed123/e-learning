@@ -13,7 +13,7 @@ import app.Util.HibernateUtil;
 
 @Stateless
 public class ReviewService {
-    public List<Reviews> getReviews(int id){
+    public List<Reviews> getReviews(Long id){
         Session session = null;
         List<Reviews> review = null;
         try {
@@ -29,6 +29,23 @@ public class ReviewService {
                 HibernateUtil.closeSession(session);
         }
         return review;
+    }
+
+    public List<Reviews> getReviews(){
+        Session session = null;
+        List<Reviews> reviews = null;
+        try {
+            session = HibernateUtil.getSession();
+            String hql = "FROM Reviews";
+            Query<Reviews> query = session.createQuery(hql, Reviews.class);
+            reviews = query.getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (session != null)
+                HibernateUtil.closeSession(session);
+        }
+        return reviews;
     }
 
     public boolean makeReview(Reviews review){

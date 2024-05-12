@@ -98,13 +98,13 @@ public class Courses {
         this.status = status;
     }
 
-    // public Set<Reviews> getCourseReviews() {
-    //     return courseReviews;
-    // }
+    public Set<Reviews> getCourseReviews() {
+        return course_reviews;
+    }
 
-    // public void setCourseReviews(Set<Reviews> courseReviews) {
-    //     this.courseReviews = courseReviews;
-    // }
+    public void setCourseReviews(Set<Reviews> courseReviews) {
+        this.course_reviews = courseReviews;
+    }
 
 
     public String getCategory() {
