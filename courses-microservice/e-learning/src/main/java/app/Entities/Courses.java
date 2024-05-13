@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import app.Util.Enums.Status;
 
@@ -31,6 +32,18 @@ public class Courses {
     @Enumerated(EnumType.STRING)
     private Status status;
     private String category;
+
+    @Transient
+    private double rating;
+    public double getRating() {
+        this.modifiyRating();
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
     public Long getPopularity() {
         return popularity;
     }
@@ -98,11 +111,11 @@ public class Courses {
         this.status = status;
     }
 
-    public Set<Reviews> getCourseReviews() {
+    public Set<Reviews> getCourse_reviews() {
         return course_reviews;
     }
 
-    public void setCourseReviews(Set<Reviews> courseReviews) {
+    public void setCourse_reviews(Set<Reviews> courseReviews) {
         this.course_reviews = courseReviews;
     }
 
@@ -130,6 +143,17 @@ public class Courses {
 
     public void setInstructorId(Long instructor) {
         this.instructorId = instructor;
+    }
+
+    public void modifiyRating(){
+        long sum = 0;
+        for(Reviews review : course_reviews){
+            sum += review.getRating();
+        }
+        if (course_reviews.size() > 0)
+            rating = (sum) / (course_reviews.size() * 1.0);
+        else
+            rating = 0;
     }
 
 }

@@ -8,9 +8,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 import re
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = (
-    "mysql://root:mostafa@localhost:3306/users"
-)
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://root:mostafa@localhost:3306/users"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
 
@@ -77,18 +75,29 @@ def register_user():
 
     if not re.match(EMAIL_REGEX_PATTERN, data["email"]):
         abort(400, "Invalid email format")
+    if data["role"] == "student":
+        user = User(
+            name=data["name"],
+            email=data["email"],
+            role=data["role"],
+            affiliation=data.get("affiliation"),
+            bio=data.get("bio"),
+        )
+        user.set_password(data["password"])
 
-    user = User(
-        name=data["name"],
-        email=data["email"],
-        role=data["role"],
-        affiliation=data.get("affiliation"),
-        years_of_experience=data.get("years_of_experience"),
-        bio=data.get("bio"),
-    )
-    user.set_password(data["password"])
+        db.session.add(user)
+    else:
+        user = User(
+            name=data["name"],
+            email=data["email"],
+            role=data["role"],
+            affiliation=data.get("affiliation"),
+            years_of_experience=data.get("years_of_experience"),
+            bio=data.get("bio"),
+        )
+        user.set_password(data["password"])
 
-    db.session.add(user)
+        db.session.add(user)
     try:
         db.session.commit()
     except IntegrityError:
@@ -182,6 +191,7 @@ def get_user_type():
         return jsonify({"role": user.role})
     except NoResultFound:
         abort(404, "User not found")
+
 
 if __name__ == "__main__":
     with app.app_context():

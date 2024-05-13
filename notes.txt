@@ -3,3 +3,5 @@ Entities:
     - User (name, email, password, affiliation, and bio) and three classes will extend it (admin, instructor, student) each with its specific attributes.
     - notifications (notification id, student id, course id, notification)
 
+TODO
+- fix updating course when the instructor makes a decision in enrollment request

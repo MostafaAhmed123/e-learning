@@ -13,10 +13,6 @@ public class Notifications {
 
     private Long studentId;
 
-    // TODO replace it with enrollment id
-    // @ManyToOne
-    // @JoinColumn(name = "courseId")
-    // private Courses course;
     public Notifications() {}
     private String notification;
     public Long getNotificationId() {

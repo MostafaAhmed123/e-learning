@@ -1,5 +1,6 @@
 package app.Services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -25,21 +26,35 @@ import app.Util.DTOs.EnrollmentRequestDTO;
 public class InstructorService {
 
     public List<CourseEnrollments> getEnrollmentRequests(Long courseId) {
-        List<CourseEnrollments> enrollments = null;
+        List<CourseEnrollments> res = new ArrayList<>();
         Session session = HibernateUtil.getSession();
         try {
-            String hql = "FROM CourseEnrollments ce WHERE ce.course.courseId = :courseId AND ce.status = :stat AND ce.course.approvedByAdmin = true";
+            String hql = "FROM CourseEnrollments ce WHERE ce.id.courseId = :courseId AND ce.status = :stat";
             Query<CourseEnrollments> query = session.createQuery(hql, CourseEnrollments.class);
             query.setParameter("courseId", courseId);
             query.setParameter("stat", app.Util.Enums.RequestStatus.PENDING);
-            enrollments = query.getResultList();
+            List<CourseEnrollments> enrollments = query.getResultList();
+            Client client = ClientBuilder.newClient();
+            WebTarget target;
+            for(CourseEnrollments enrollment : enrollments){
+                target = client.target("http://localhost:8080")
+                .path("course-microservice-1.0/api/course")
+                .queryParam("id", enrollment.getId().getCourseId());
+                String response = target.request(MediaType.APPLICATION_JSON).get(String.class);
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode jsonResponse;
+                jsonResponse = objectMapper.readTree(response);
+                boolean approvedByAdmin = jsonResponse.get("approvedByAdmin").asBoolean();
+                if(approvedByAdmin)
+                    res.add(enrollment);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             if (session != null)
                 HibernateUtil.closeSession(session);
         }
-        return enrollments;
+        return res.isEmpty() ? null : res;
     }
 
     public boolean makeDecision(EnrollmentRequestDTO wrapper) {
@@ -60,13 +75,14 @@ public class InstructorService {
             enrollments = query.getResultList();
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
         }
         if (enrollment == null || enrollment.getStatus() != app.Util.Enums.RequestStatus.PENDING)
             return false;
         Transaction transaction = session.beginTransaction();
         Client client = ClientBuilder.newClient();
         WebTarget target = client.target("http://localhost:8080")
-                .path("course-microservice/api/course")
+                .path("course-microservice-1.0/api/course")
                 .queryParam("id", enrollment.getId().getCourseId());
         String response = target.request(MediaType.APPLICATION_JSON).get(String.class);
         ObjectMapper objectMapper = new ObjectMapper();
@@ -84,7 +100,7 @@ public class InstructorService {
                 popularity++;
                 ((ObjectNode) jsonResponse).put("popularity", popularity);
                 String updatedJsonString = objectMapper.writeValueAsString(jsonResponse);
-                target = client.target("http://localhost:8080").path("course-microservice/api/course");
+                target = client.target("http://localhost:8080").path("course-microservice-1.0/api/update");
                 Response res = target.request(MediaType.APPLICATION_JSON)
                         .put(Entity.entity(updatedJsonString, MediaType.APPLICATION_JSON));
                 if (res.getStatus() != 200)

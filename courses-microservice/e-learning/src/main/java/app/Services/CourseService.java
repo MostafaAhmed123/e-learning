@@ -27,7 +27,7 @@ import app.Util.DTOs.CourseDTO;
 
 @Stateless
 public class CourseService {
-    public Courses getCourse(Long id) {
+    public Courses getCourseForAdmin(Long id){
         Session session = null;
         Courses course = null;
         try {
@@ -42,6 +42,10 @@ public class CourseService {
             if (session != null)
                 HibernateUtil.closeSession(session);
         }
+        return course;
+    }
+    public Courses getCourse(Long id) {
+        Courses course = this.getCourseForAdmin(id);
         return course != null && course.getApprovedByAdmin() ? course : null;
     }
 
@@ -78,7 +82,7 @@ public class CourseService {
         try {
             Session session = HibernateUtil.getSession();
             transaction = session.beginTransaction();
-            Courses course = this.getCourse(updatedCourse.id);
+            Courses course = this.getCourseForAdmin(updatedCourse.id);
             if (course == null)
                 return false;
             course.setInstructorId(updatedCourse.instructorID);
@@ -194,6 +198,23 @@ public class CourseService {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public List<Courses> getInstructorCourses(Long id){
+        Session session = HibernateUtil.getSession();
+        List<Courses> courses = null;
+        try {
+            Query<Courses> query = session.createQuery("FROM Courses c WHERE c.approvedByAdmin = true AND c.instructorId = :id", Courses.class);
+            query.setParameter("id", id);
+            courses = query.getResultList();
+        } catch (Exception e) {
+            System.out.println("Error in Browsing " + e.getMessage());
+        } finally {
+            if (session != null) {
+                HibernateUtil.closeSession(session);
+            }
+        }
+        return courses;
     }
 
 }

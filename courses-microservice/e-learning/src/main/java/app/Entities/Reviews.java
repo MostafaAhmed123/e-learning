@@ -6,6 +6,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 @Entity
 public class Reviews {
@@ -47,9 +49,14 @@ public class Reviews {
         return rating;
     }
     public void setRating(int rating) {
-        this.rating = rating;
+        if(rating >= 0 && rating <= 5)
+            this.rating = rating;
+        else
+            this.rating = 0;
     }
     private String reviewText;
+    @Min(0)
+    @Max(5)
     private int rating;
 
     public Reviews() {
