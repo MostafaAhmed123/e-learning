@@ -3,13 +3,8 @@ package app.Services;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Predicate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
-import javax.persistence.criteria.Root;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
@@ -21,9 +16,7 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 
 import app.Entities.Courses;
-import app.Entities.Reviews;
 import app.Util.HibernateUtil;
-import app.Util.DTOs.CourseDTO;
 
 @Stateless
 public class CourseService {
@@ -77,24 +70,24 @@ public class CourseService {
         return true;
     }
 
-    public boolean updateCourse(CourseDTO updatedCourse) {
+    public boolean updateCourse(Courses updatedCourse) {
         Transaction transaction = null;
         try {
             Session session = HibernateUtil.getSession();
             transaction = session.beginTransaction();
-            Courses course = this.getCourseForAdmin(updatedCourse.id);
+            Courses course = this.getCourseForAdmin(updatedCourse.getCourseId());
             if (course == null)
                 return false;
-            course.setInstructorId(updatedCourse.instructorID);
-            course.setApprovedByAdmin(updatedCourse.approved);
-            course.setCapacity(updatedCourse.capacity);
-            course.setCategory(updatedCourse.category);
-            course.setContent(updatedCourse.content);
-            course.setDuration(updatedCourse.duration);
-            course.setStatus(updatedCourse.status);
-            course.setPopularity(updatedCourse.popularity);
-            course.setName(updatedCourse.name);
-            session.update(course);
+            // course.setInstructorId(updatedCourse.instructorID);
+            // course.setApprovedByAdmin(updatedCourse.approved);
+            // course.setCapacity(updatedCourse.capacity);
+            // course.setCategory(updatedCourse.category);
+            // course.setContent(updatedCourse.content);
+            // course.setDuration(updatedCourse.duration);
+            // course.setStatus(updatedCourse.status);
+            // course.setPopularity(updatedCourse.popularity);
+            // course.setName(updatedCourse.name);
+            session.update(updatedCourse);
             transaction.commit();
             HibernateUtil.closeSession(session);
         } catch (Exception e) {
@@ -185,15 +178,8 @@ public class CourseService {
 
     public List<Courses> getAllCoursesSortedByRating() {
         try (Session session = HibernateUtil.getSession()) {
-            CriteriaBuilder cb = session.getCriteriaBuilder();
-            CriteriaQuery<Courses> cq = cb.createQuery(Courses.class);
-            Root<Courses> courseRoot = cq.from(Courses.class);
-            Join<Courses, Reviews> reviewsJoin = courseRoot.join("courseReviews");
-            Predicate approvedPredicate = cb.isTrue(courseRoot.get("approvedByAdmin"));
-            cq.select(courseRoot).where(approvedPredicate)
-                    .groupBy(courseRoot.get("courseId"))
-                    .orderBy(cb.desc(cb.avg(reviewsJoin.get("rating"))));
-            return session.createQuery(cq).getResultList();
+            return session.createQuery("SELECT c FROM Courses c LEFT JOIN c.course_reviews r GROUP BY c.courseId ORDER BY AVG(r.rating) DESC", Courses.class)
+            .getResultList();
         } catch (Exception e) {
             e.printStackTrace();
             return null;

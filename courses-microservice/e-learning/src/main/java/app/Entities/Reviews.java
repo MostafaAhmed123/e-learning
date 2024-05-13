@@ -33,12 +33,12 @@ public class Reviews {
     public void setStudentId(Long student) {
         this.studentId = student;
     }
-    // public Courses getCourse() {
-    //     return course;
-    // }
-    // public void setCourse(Courses course) {
-    //     this.course = course;
-    // }
+    public Courses getCourse() {
+        return course;
+    }
+    public void setCourse(Courses course) {
+        this.course = course;
+    }
     public String getReviewText() {
         return reviewText;
     }

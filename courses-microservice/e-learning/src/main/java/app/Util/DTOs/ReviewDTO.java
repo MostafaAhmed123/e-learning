@@ -1,7 +1,7 @@
 package app.Util.DTOs;
 
 public class ReviewDTO {
-    public Long studentId, courseId;
+    public Long studentId, course, id;
+    public String reviewText;
     public int rating;
-    public String review;
 }

@@ -1,5 +1,6 @@
 package app.Rest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -30,8 +31,7 @@ public class Application {
     @Path("course")
     public boolean createCourse(CourseDTO wrapper) {
         Courses course = new Courses();
-
-        course.setInstructorId(wrapper.instructorID);
+        course.setInstructorId(wrapper.instructorId);
         course.setApprovedByAdmin(false);
         course.setCapacity(wrapper.capacity);
         course.setCategory(wrapper.category);
@@ -70,7 +70,7 @@ public class Application {
 
     @PUT
     @Path("update")
-    public boolean update(CourseDTO course) {
+    public boolean update(Courses course) {
         return crsService.updateCourse(course);
     }
 
@@ -78,12 +78,13 @@ public class Application {
     @Path("makereview")
     public boolean makeReview(ReviewDTO wrapper) {
         Reviews review = new Reviews();
-        Courses course = crsService.getCourse(wrapper.courseId);
+        Courses course = crsService.getCourse(wrapper.course);
         if (course == null)
             return false;
-        // review.setCourse(course);
+        System.out.println("hello 1");
+        review.setCourse(course);
         review.setRating(wrapper.rating);
-        review.setReviewText(wrapper.review);
+        review.setReviewText(wrapper.reviewText);
         review.setStudentId(wrapper.studentId);
         return reviewService.makeReview(review);
     }
@@ -96,14 +97,31 @@ public class Application {
 
     @GET
     @Path("reviews")
-    public List<Reviews> getReviews(@QueryParam(value = "id") Long id){
-        return reviewService.getReviews(id);
+    public List<ReviewDTO> getReviews(@QueryParam(value = "id") Long id){
+        List<Reviews> reviews = reviewService.getReviews(id);
+        List<ReviewDTO> res = new ArrayList<>();
+        for(Reviews review : reviews){
+            ReviewDTO r = new ReviewDTO();
+            // r.courseId = review.getCourse().getCourseId();
+            r.id = review.getId();
+            r.rating = review.getRating();
+            r.reviewText = review.getReviewText();
+            r.studentId = review.getStudentId();
+            res.add(r);
+        }
+        return res;
     }
 
     @GET
     @Path("reviews")
     public List<Reviews> getReviews(){
         return reviewService.getReviews();
+    }
+
+    @GET
+    @Path("sortedcourses")
+    public List<Courses> getSortedCourses(){
+        return crsService.getAllCoursesSortedByRating();
     }
 
 }

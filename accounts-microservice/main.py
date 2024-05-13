@@ -79,7 +79,7 @@ def register_user():
         user = User(
             name=data["name"],
             email=data["email"],
-            role=data["role"],
+            role="student",
             affiliation=data.get("affiliation"),
             bio=data.get("bio"),
         )
@@ -90,7 +90,7 @@ def register_user():
         user = User(
             name=data["name"],
             email=data["email"],
-            role=data["role"],
+            role="instructor",
             affiliation=data.get("affiliation"),
             years_of_experience=data.get("years_of_experience"),
             bio=data.get("bio"),

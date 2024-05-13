@@ -20,22 +20,25 @@ import app.Util.HibernateUtil;
 
 @Stateless
 public class NotificationService {
-    public boolean createNotification(Notifications notification){
+    public boolean createNotification(Notifications notification) {
         Transaction transaction = null;
         try {
             Client client = ClientBuilder.newClient();
             WebTarget target = client.target("http://localhost:5000")
                     .path("usertype")
                     .queryParam("id", notification.getStudentId());
-                String response = target.request(MediaType.APPLICATION_JSON).get(String.class);
-                System.out.println(response);
+            String response = target.request(MediaType.APPLICATION_JSON).get(String.class);
+            System.out.println(response);
             Session session = HibernateUtil.getSession();
             transaction = session.beginTransaction();
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonResponse = objectMapper.readTree(response);
             String role = jsonResponse.get("role").asText();
-            if (!role.equals("student"))
+            if (!role.equals("student")) {
                 return false;
+            }
+            System.out.println(notification.getNotification());
+            System.out.println(notification.getStudentId());
             session.save(notification);
             transaction.commit();
             HibernateUtil.closeSession(session);
@@ -48,7 +51,7 @@ public class NotificationService {
         return true;
     }
 
-    public List<Notifications> getNotifications(Long id){
+    public List<Notifications> getNotifications(Long id) {
         Session session = null;
         List<Notifications> notifications = null;
         try {

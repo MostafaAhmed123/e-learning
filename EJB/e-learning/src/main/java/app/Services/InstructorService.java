@@ -101,6 +101,7 @@ public class InstructorService {
                 ((ObjectNode) jsonResponse).put("popularity", popularity);
                 String updatedJsonString = objectMapper.writeValueAsString(jsonResponse);
                 target = client.target("http://localhost:8080").path("course-microservice-1.0/api/update");
+                System.out.println(updatedJsonString);
                 Response res = target.request(MediaType.APPLICATION_JSON)
                         .put(Entity.entity(updatedJsonString, MediaType.APPLICATION_JSON));
                 if (res.getStatus() != 200)
@@ -111,7 +112,7 @@ public class InstructorService {
             notification.setNotification("your enrollment request to course " + wrapper.courseId + " has been "
                     + (wrapper.accept ? "accepted" : "rejected"));
             NotificationService service = new NotificationService();
-            if (service.createNotification(notification))
+            if (!service.createNotification(notification))
                 throw new Exception("notification cannot be created");
             client.close();
             transaction.commit();

@@ -10,7 +10,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
-
 import app.Services.AdminService;
 import app.Services.EnrollmentService;
 import app.Services.InstructorService;
@@ -75,6 +74,11 @@ public class Application {
     @GET
     @Path("activities")
     public List<List<? extends Object>> getStat(@QueryParam(value = "id") Long id){
-        return admin.getActivityLog(id);
+        try {
+            return admin.getActivityLog(id);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
     }
 }

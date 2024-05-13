@@ -53,11 +53,12 @@ public class ReviewService {
         try {
             Session session = HibernateUtil.getSession();
             transaction = session.beginTransaction();
-            String hql = "FROM Reviews r WHERE r.studentId = :id";
+            String hql = "FROM Reviews r WHERE r.studentId = :id AND r.course.courseId =:crs";
             Query<Reviews> query = session.createQuery(hql, Reviews.class);
             query.setParameter("id", review.getStudentId());
+            query.setParameter("crs", review.getCourse());
             List<Reviews> tmp = query.getResultList();
-            if(!tmp.isEmpty())
+            if(!tmp.isEmpty() || review.getCourse().getStatus() != app.Util.Enums.Status.DONE)
                 return false;
             session.save(review);
             transaction.commit();

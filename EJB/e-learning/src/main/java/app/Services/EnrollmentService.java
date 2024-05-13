@@ -2,6 +2,7 @@ package app.Services;
 
 import java.util.List;
 
+import javax.ejb.Stateless;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -25,6 +26,7 @@ import app.Models.CourseEnrollments;
 import app.Util.HibernateUtil;
 import app.Util.DTOs.EnrollmentRequestDTO;
 
+@Stateless
 public class EnrollmentService {
     public boolean enroll(EnrollmentRequestDTO enrollrequest) {
         Transaction transaction = null;
@@ -75,7 +77,8 @@ public class EnrollmentService {
             CourseEnrollments enrollment = query.uniqueResult();
             if (enrollment == null || enrollment.getStatus() != app.Util.Enums.RequestStatus.ACCEPTED)
                 return false;
-            session.delete(enrollment);
+            enrollment.setStatus(app.Util.Enums.RequestStatus.CANCELED);
+            session.update(enrollment);
             Client client = ClientBuilder.newClient();
             WebTarget target = client.target("http://localhost:8080")
                     .path("course-microservice-1.0/api/course")
@@ -88,7 +91,7 @@ public class EnrollmentService {
             popularity--;
             ((ObjectNode) jsonResponse).put("popularity", popularity);
             String updatedJsonString = objectMapper.writeValueAsString(jsonResponse);
-            target = client.target("http://localhost:8080").path("course-microservice-1.0/api/course");
+            target = client.target("http://localhost:8080").path("course-microservice-1.0/api/update");
             Response res = target.request(MediaType.APPLICATION_JSON)
                     .put(Entity.entity(updatedJsonString, MediaType.APPLICATION_JSON));
             if (res.getStatus() != 200)

@@ -111,13 +111,13 @@ public class Courses {
         this.status = status;
     }
 
-    public Set<Reviews> getCourse_reviews() {
-        return course_reviews;
-    }
+    // public Set<Reviews> getCourse_reviews() {
+    //     return course_reviews;
+    // }
 
-    public void setCourse_reviews(Set<Reviews> courseReviews) {
-        this.course_reviews = courseReviews;
-    }
+    // public void setCourse_reviews(Set<Reviews> courseReviews) {
+    //     this.course_reviews = courseReviews;
+    // }
 
 
     public String getCategory() {
