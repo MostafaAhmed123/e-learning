@@ -1,0 +1,119 @@
+<div class="notification-container">
+  <button (click)="showMessage()" class="notification-button">Show notification</button>
+  <div *ngIf="showMessageClicked" class="message">{{ message }}</div>
+</div>
+
+<div class="container2">
+  <div class="row">
+    <div class="search-course">
+      <input type="text" name="search" [(ngModel)]="searchText" placeholder="Search by name or category">
+    </div>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Id</th>
+          <th>Name</th>
+          <th>Category</th>
+          <th>Actions</th> 
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let course of courses | filter: searchText">
+          <td>{{ course.id }}</td>
+          <td>{{ course.name }}</td>
+          <td>{{ course.category }}</td>
+          <td><button (click)="enroll(course.id)" class="enroll-button">Enroll</button></td> 
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<div class="card" *ngIf="selectedCourse">
+  <div class="card-header">
+    Course Details
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">{{ selectedCourse.name }}</h5>
+    <p class="card-text">Category: {{ selectedCourse.category }}</p>
+    <p class="card-text">Duration: {{ selectedCourse.Duration }}</p>
+    <p class="card-text">Rating: {{ selectedCourse.Rating }}</p>
+    <p class="card-text">Capacity: {{ selectedCourse.Capacity }}</p>
+    <p class="card-text">EnrolledStudents: {{ selectedCourse.EnrolledStudents }}</p>
+  </div>
+</div>
+
+
+<div class="container">
+    <h1>My Enrollments</h1>
+    
+    <div *ngIf="currentEnrollments.length > 0">
+      <h2>Current Enrollments</h2>
+      <div class="enrollment" *ngFor="let enrollment of currentEnrollments">
+        <div class="course-info">
+          <h3>{{ enrollment.courseName }}</h3>
+          <p>Category: {{ enrollment.category }}</p>
+          <p>Duration: {{ enrollment.duration }}</p>
+          <p>Rating: {{ enrollment.rating }}</p>
+          <p>Capacity: {{ enrollment.capacity }}</p>
+          <p>Enrolled Students: {{ enrollment.enrolledStudents }}</p>
+          <div class="cancel-button"><button (click)="cancelEnrollment(enrollment)" class="cancel-button">Cancel Enrollment</button></div>
+        </div>
+      </div>
+    </div>
+ 
+    
+
+    <div *ngIf="pastEnrollments.length > 0">
+      <h2>Past Enrollments</h2>
+      <div class="enrollment" *ngFor="let enrollment of pastEnrollments">
+        <div class="course-info">
+          <h3>{{ enrollment.courseName }}</h3>
+          <p>Category: {{ enrollment.category }}</p>
+          <p>Duration: {{ enrollment.duration }}</p>
+          <p>Rating: {{ enrollment.rating }}</p>
+          <p>Capacity: {{ enrollment.capacity }}</p>
+          <p>Enrolled Students: {{ enrollment.enrolledStudents }}</p>
+          <button (click)="openReviewForm()" class="review-button">Make Review and Rating</button>
+        </div>
+        <div *ngIf="showReviewForm">
+          <form>
+            <div>
+              <label for="rating">Rating:</label>
+              <input type="number" id="rating" name="rating" [(ngModel)]="rating">
+            </div>
+            <div>
+              <label for="review">Review:</label>
+              <textarea id="review" name="review" [(ngModel)]="review"></textarea>
+            </div>
+            <button type="submit" class="submit-button">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="currentEnrollments.length === 0 && pastEnrollments.length === 0">
+      <p>No enrollments found.</p>
+    </div>
+  </div>
+    
+    <!-- <div *ngIf="pastEnrollments.length > 0">
+      <h2>Past Enrollments</h2>
+      <div class="enrollment" *ngFor="let enrollment of pastEnrollments">
+        <div class="course-info">
+          <h3>{{ enrollment.courseName }}</h3>
+          <p>Category: {{ enrollment.category }}</p>
+          <p>Duration: {{ enrollment.duration }}</p>
+          <p>Rating: {{ enrollment.rating }}</p>
+          <p>Capacity: {{ enrollment.capacity }}</p>
+          <p>Enrolled Students: {{ enrollment.enrolledStudents }}</p>
+        </div>
+      </div>
+    </div>
+    
+    <div *ngIf="currentEnrollments.length === 0 && pastEnrollments.length === 0">
+      <p>No enrollments found.</p>
+    </div>
+  </div>
+   -->
+
