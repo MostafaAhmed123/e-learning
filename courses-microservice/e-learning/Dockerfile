@@ -9,7 +9,7 @@ RUN mvn clean package -DskipTests
 
 FROM jboss/wildfly:latest
 
-COPY --from=builder /app/target/course-microservice.war /opt/jboss/wildfly/standalone/deployments/
+COPY --from=builder /app/target/course-microservice-1.0.war /opt/jboss/wildfly/standalone/deployments/
 
 EXPOSE 8080
 
