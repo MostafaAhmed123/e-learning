@@ -45,9 +45,10 @@ public class CourseService {
 
     private boolean isCourseExist(String name) {
         Session session = HibernateUtil.getSession();
-        String hql = "FROM Courses c WHERE name = :tmp AND c.approvedByAdmin = true";
+        String hql = "FROM Courses c WHERE name = :tmp AND c.approvedByAdmin = true AND c.status = :stat";
         Query<Courses> query = session.createQuery(hql, Courses.class);
         query.setParameter("tmp", name);
+        query.setParameter("stat", app.Util.Enums.Status.CURRENT);
         return query.getResultList().size() > 0;
     }
 

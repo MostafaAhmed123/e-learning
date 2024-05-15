@@ -47,7 +47,8 @@ public class EnrollmentService {
             jsonResponse = objectMapper.readTree(response);
             String course = jsonResponse.get("status").asText();
             boolean status = jsonResponse.get("approvedByAdmin").asBoolean();
-            if (course.equals("DONE") || !role.equals("student") || !status)
+            String stat = jsonResponse.get("status").asText();
+            if (course.equals("DONE") || !role.equals("student") || !status || stat.equals("DONE"))
                 return false;
             CourseEnrollments enrollment = new CourseEnrollments();
             CourseEnrollmentId id = new CourseEnrollmentId(enrollrequest.studentId, enrollrequest.courseId);
