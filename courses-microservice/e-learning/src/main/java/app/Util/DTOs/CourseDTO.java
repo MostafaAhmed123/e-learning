@@ -1,5 +1,8 @@
 package app.Util.DTOs;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CourseDTO {
     public Long courseId;
     public String name;
