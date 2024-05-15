@@ -25,7 +25,7 @@ import app.Util.DTOs.EnrollmentRequestDTO;
 @Stateless
 public class InstructorService {
 
-    public List<CourseEnrollments> getEnrollmentRequests(Long courseId) {
+    public List<CourseEnrollments> getEnrollmentRequests(Long courseId, Long id) {
         List<CourseEnrollments> res = new ArrayList<>();
         Session session = HibernateUtil.getSession();
         try {
@@ -36,16 +36,17 @@ public class InstructorService {
             List<CourseEnrollments> enrollments = query.getResultList();
             Client client = ClientBuilder.newClient();
             WebTarget target;
-            for(CourseEnrollments enrollment : enrollments){
+            for (CourseEnrollments enrollment : enrollments) {
                 target = client.target("http://localhost:8080")
-                .path("course-microservice-1.0/api/course")
-                .queryParam("id", enrollment.getId().getCourseId());
+                        .path("course-microservice-1.0/api/course")
+                        .queryParam("id", enrollment.getId().getCourseId());
                 String response = target.request(MediaType.APPLICATION_JSON).get(String.class);
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode jsonResponse;
                 jsonResponse = objectMapper.readTree(response);
                 boolean approvedByAdmin = jsonResponse.get("approvedByAdmin").asBoolean();
-                if(approvedByAdmin)
+                Long instructor = jsonResponse.get("instructorId").asLong();
+                if (approvedByAdmin && instructor == id)
                     res.add(enrollment);
             }
         } catch (Exception e) {
@@ -57,7 +58,7 @@ public class InstructorService {
         return res.isEmpty() ? null : res;
     }
 
-    public boolean makeDecision(EnrollmentRequestDTO wrapper) {
+    public boolean makeDecision(EnrollmentRequestDTO wrapper, Long id) {
         CourseEnrollments enrollment = null;
         List<CourseEnrollments> enrollments = null;
         Session session = HibernateUtil.getSession();
@@ -95,6 +96,14 @@ public class InstructorService {
                     && capacity > enrollments.size())
                             ? app.Util.Enums.RequestStatus.ACCEPTED
                             : app.Util.Enums.RequestStatus.REUECTED);
+            target = client.target("http://localhost:5000")
+                    .path("usertype")
+                    .queryParam("id", id);
+            response = target.request(MediaType.APPLICATION_JSON).get(String.class);
+            jsonResponse = objectMapper.readTree(response);
+            String role = jsonResponse.get("role").asText();
+            if(!role.equals("instructor"))
+                return false;
             session.update(enrollment);
             if (wrapper.accept) {
                 popularity++;

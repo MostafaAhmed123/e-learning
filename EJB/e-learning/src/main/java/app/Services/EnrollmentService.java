@@ -89,6 +89,14 @@ public class EnrollmentService {
             jsonResponse = objectMapper.readTree(response);
             Long popularity = jsonResponse.get("popularity").asLong();
             popularity--;
+            target = client.target("http://localhost:5000")
+                    .path("usertype")
+                    .queryParam("id", wrapper.studentId);
+            response = target.request(MediaType.APPLICATION_JSON).get(String.class);
+            JsonNode tmp = objectMapper.readTree(response);
+            String role = tmp.get("role").asText();
+            if (!role.equals("student"))
+                return false;
             ((ObjectNode) jsonResponse).put("popularity", popularity);
             String updatedJsonString = objectMapper.writeValueAsString(jsonResponse);
             target = client.target("http://localhost:8080").path("course-microservice-1.0/api/update");

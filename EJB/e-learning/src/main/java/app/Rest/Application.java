@@ -31,14 +31,14 @@ public class Application {
     AdminService admin = new AdminService();
     @GET
     @Path("enrollments")
-    public List<CourseEnrollments> getEnrollments(@QueryParam(value = "id") Long id){
-        return service.getEnrollmentRequests(id);
+    public List<CourseEnrollments> getEnrollments(@QueryParam(value = "course") Long course, @QueryParam(value = "id") Long id){
+        return service.getEnrollmentRequests(course, id);
     }
 
     @PUT
     @Path("makedecision")
-    public boolean makeDecision(EnrollmentRequestDTO wrapper){
-        return service.makeDecision(wrapper);
+    public boolean makeDecision(EnrollmentRequestDTO wrapper, @QueryParam(value = "id") Long id){
+        return service.makeDecision(wrapper, id);
     }
 
     @POST

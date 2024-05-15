@@ -11,7 +11,8 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 
 import org.hibernate.Transaction;
-
+import java.util.Comparator;
+import java.util.stream.Collectors;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
@@ -50,13 +51,21 @@ public class CourseService {
         return query.getResultList().size() > 0;
     }
 
-    public boolean delete(Long id) {
+    public boolean delete(Long id, Long admin) {
         Transaction transaction = null;
         try {
             Session session = HibernateUtil.getSession();
             transaction = session.beginTransaction();
-            Courses course = this.getCourse(id);
-            if (course == null)
+            Courses course = this.getCourseForAdmin(id);
+            Client client = ClientBuilder.newClient();
+            WebTarget target = client.target("http://localhost:5000")
+                    .path("usertype")
+                    .queryParam("id", admin);
+                String response = target.request(MediaType.APPLICATION_JSON).get(String.class);
+                ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonResponse = objectMapper.readTree(response);
+            String role = jsonResponse.get("role").asText();
+            if (course == null || !role.equals("admin"))
                 return false;
             session.delete(course);
             transaction.commit();
@@ -70,13 +79,21 @@ public class CourseService {
         return true;
     }
 
-    public boolean updateCourse(Courses updatedCourse) {
+    public boolean updateCourse(Courses updatedCourse, Long id) {
         Transaction transaction = null;
         try {
             Session session = HibernateUtil.getSession();
             transaction = session.beginTransaction();
             Courses course = this.getCourseForAdmin(updatedCourse.getCourseId());
-            if (course == null)
+            Client client = ClientBuilder.newClient();
+            WebTarget target = client.target("http://localhost:5000")
+                    .path("usertype")
+                    .queryParam("id", id);
+                String response = target.request(MediaType.APPLICATION_JSON).get(String.class);
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonResponse = objectMapper.readTree(response);
+            String role = jsonResponse.get("role").asText();
+            if (course == null || !role.equals("admin"))
                 return false;
             // course.setInstructorId(updatedCourse.instructorID);
             // course.setApprovedByAdmin(updatedCourse.approved);
@@ -127,7 +144,7 @@ public class CourseService {
         return true;
     }
 
-    public List<Courses> search(String searchTerm, boolean byName) {
+    public List<Courses> search(String searchTerm, boolean byName, boolean sorted) {
         Session session = null;
         List<Courses> courses = null;
         try {
@@ -144,11 +161,53 @@ public class CourseService {
                 query.setParameter("searchTerm", searchTerm);
             }
             courses = query.getResultList();
+            if(sorted){
+                courses = this.sortByRatingDesc(courses);
+            }
         } catch (Exception e) {
             System.out.println("Error in search " + e.getMessage());
         } finally {
             if (session != null)
                 HibernateUtil.closeSession(session);
+        }
+        return courses;
+    }
+
+    private List<Courses> sortByRatingDesc(List<Courses> courses) {
+        List<Courses> sortedCourses = courses.stream()
+                .sorted(Comparator.comparingDouble(Courses::getRating).reversed())
+                .collect(Collectors.toList());
+        return sortedCourses;
+    }
+
+    public List<Courses> notApprovedYet(){
+        Session session = HibernateUtil.getSession();
+        List<Courses> courses = null;
+        try {
+            Query<Courses> query = session.createQuery("FROM Courses c WHERE c.approvedByAdmin = false", Courses.class);
+            courses = query.getResultList();
+        } catch (Exception e) {
+            System.out.println("Error in Browsing " + e.getMessage());
+        } finally {
+            if (session != null) {
+                HibernateUtil.closeSession(session);
+            }
+        }
+        return courses;
+    }
+
+    public List<Courses> getAll(){
+        Session session = HibernateUtil.getSession();
+        List<Courses> courses = null;
+        try {
+            Query<Courses> query = session.createQuery("FROM Courses", Courses.class);
+            courses = query.getResultList();
+        } catch (Exception e) {
+            System.out.println("Error in Browsing " + e.getMessage());
+        } finally {
+            if (session != null) {
+                HibernateUtil.closeSession(session);
+            }
         }
         return courses;
     }

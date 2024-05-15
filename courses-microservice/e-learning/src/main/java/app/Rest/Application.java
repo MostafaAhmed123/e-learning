@@ -56,22 +56,34 @@ public class Application {
     }
 
     @GET
+    @Path("allcourses")
+    public List<Courses> getAllCourses() {
+        return crsService.getAll();
+    }
+
+    @GET
+    @Path("notapproved")
+    public List<Courses> notApproved(){
+        return crsService.notApprovedYet();
+    }
+
+    @GET
     @Path("search")
     public List<Courses> search(@QueryParam(value = "course") String course,
-            @QueryParam(value = "byName") boolean byName) {
-        return crsService.search(course, byName);
+            @QueryParam(value = "byName") boolean byName, @QueryParam(value = "sorted") boolean sorted) {
+        return crsService.search(course, byName, sorted);
     }
 
     @DELETE
     @Path("course")
-    public boolean delete(@QueryParam(value = "id") Long id) {
-        return crsService.delete(id);
+    public boolean delete(@QueryParam(value = "course") Long course, @QueryParam(value = "id") Long id) {
+        return crsService.delete(course, id);
     }
 
     @PUT
     @Path("update")
-    public boolean update(Courses course) {
-        return crsService.updateCourse(course);
+    public boolean update(Courses course, @QueryParam(value = "id") Long id) {
+        return crsService.updateCourse(course, id);
     }
 
     @GET
