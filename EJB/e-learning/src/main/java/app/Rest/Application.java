@@ -66,6 +66,12 @@ public class Application {
     }
 
     @GET
+    @Path("instructorenrollments")
+    public List<CourseEnrollments> getInstructorEnrollments(@QueryParam(value = "id") Long id){
+        return enrollService.getInstructorEnrollments(id);
+    }
+
+    @GET
     @Path("notifications")
     public List<Notifications> getNotifications(@QueryParam(value = "id") Long id){
         return notifiy.getNotifications(id);

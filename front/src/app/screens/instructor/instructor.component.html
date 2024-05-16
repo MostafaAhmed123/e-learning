@@ -10,8 +10,8 @@
   <form  (ngSubmit)="crateCourse()" class="space-y-4">
     <!-- Course Title -->
     <div class="input-container">
-      <label for="title"  >Course Title:</label>
-      <input type="text" id="title" formControlName="title" [(ngModel)]="name">
+      <label for="name"  >Course Title:</label>
+      <input type="text" id="name" name="name" [(ngModel)]="name" required>
     </div>
 
     <div class="input-container">
@@ -57,8 +57,8 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let course of courses | filter: searchText" (click)="showDetails(course.id)">
-          <td>{{ course.id }}</td>
+        <tr *ngFor="let course of courses | filter: searchText" (click)="showDetails(course)">
+          <td>{{ course.courseId }}</td>
           <td>{{ course.name }}</td>
           <td>{{ course.category }}</td>
         </tr>
@@ -74,10 +74,10 @@
   <div class="card-body">
     <h5 class="card-title">{{ selectedCourse.name }}</h5>
     <p class="card-text">Category: {{ selectedCourse.category }}</p>
-    <p class="card-text">Duration: {{ selectedCourse.Duration }}</p>
-    <p class="card-text">Rating: {{ selectedCourse.Rating }}</p>
-    <p class="card-text">Capacity: {{ selectedCourse.Capacity }}</p>
-    <p class="card-text">EnrolledStudents: {{ selectedCourse.EnrolledStudents }}</p>
+    <p class="card-text">Duration: {{ selectedCourse.duration }}</p>
+    <p class="card-text">Rating: {{ selectedCourse.rating }}</p>
+    <p class="card-text">Capacity: {{ selectedCourse.capacity }}</p>
+    <p class="card-text">Content: {{ selectedCourse.content }}</p>
   </div>
 </div>
 

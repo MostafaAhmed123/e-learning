@@ -109,9 +109,10 @@ def register_user():
     return jsonify({"message": "User registered successfully"}), 201
 
 
-@app.route("/users/<int:user_id>", methods=["GET", "PUT", "DELETE"])
-def manage_user(user_id):
+@app.route("/user", methods=["GET", "PUT", "DELETE"])
+def manage_user():
     try:
+        user_id = id = request.args.get("id")
         user = User.query.filter_by(id=user_id).one()
     except NoResultFound:
         abort(404, "User not found")
@@ -146,7 +147,7 @@ def manage_user(user_id):
             user.role = data["role"]
         if "affiliation" in data:
             user.affiliation = data["affiliation"]
-        if "years_of_experience" in data:
+        if "years_of_experience" in data and user.role == "instructor":
             user.years_of_experience = data["years_of_experience"]
         if "bio" in data:
             user.bio = data["bio"]
@@ -195,7 +196,28 @@ def get_user_type():
         abort(404, "User not found")
 
 
+def init_fun():
+    try:
+        admin_user = User.query.filter_by(email="admin@ecom.com").first()
+        if admin_user:
+            print("Admin user already exists. Initialization skipped.")
+            return
+        admin_user = User(
+            name="Admin",
+            email="admin@ecom.com",
+            role="admin",
+            password="admin",
+        )
+        admin_user.set_password(admin_user.password)
+        db.session.add(admin_user)
+        db.session.commit()
+        print("Admin user created successfully.")
+    except Exception as e:
+        print("Error initializing admin user:", e)
+
+
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
+        init_fun()
     app.run(debug=False)

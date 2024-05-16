@@ -1,5 +1,6 @@
 package app.Services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -10,6 +11,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -24,6 +26,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import app.Models.CourseEnrollmentId;
 import app.Models.CourseEnrollments;
 import app.Util.HibernateUtil;
+import app.Util.DTOs.CourseDTO;
 import app.Util.DTOs.EnrollmentRequestDTO;
 
 @Stateless
@@ -115,6 +118,42 @@ public class EnrollmentService {
         return true;
     }
 
+    public List<CourseEnrollments> getInstructorEnrollments(Long instructorId){
+        List<CourseEnrollments> enrollments = null;
+        try{
+            Client client = ClientBuilder.newClient();
+            WebTarget target = client.target("http://localhost:8080").path("course-microservice-1.0/api/courses");
+
+        List<CourseDTO> courses = target.request(MediaType.APPLICATION_JSON).get(new GenericType<List<CourseDTO>>(){});
+        enrollments = new ArrayList<>();
+        for(CourseDTO course : courses){
+            if(course.instructorId == instructorId)
+                enrollments.addAll(this.getCourseEnrollments(course.courseId));
+        }
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+        return enrollments;
+    }
+
+    public List<CourseEnrollments> getCourseEnrollments(Long course){
+        Session session = null;
+        List<CourseEnrollments> enrollments = null;
+        try {
+            session = HibernateUtil.getSession();
+            String hql = "FROM CourseEnrollments ce WHERE ce.id.courseId =:id AND ce.status =:stat ";
+            Query<CourseEnrollments> query = session.createQuery(hql, CourseEnrollments.class);
+            query.setParameter("id", course);
+            query.setParameter("stat", app.Util.Enums.RequestStatus.PENDING);
+            enrollments = query.getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (session != null)
+                HibernateUtil.closeSession(session);
+        }
+        return enrollments;
+    }
     public List<CourseEnrollments> getEnrollments() {
         Session session = null;
         List<CourseEnrollments> enrollments = null;

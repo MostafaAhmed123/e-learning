@@ -12,6 +12,7 @@ import { HttpClient,HttpErrorResponse, } from '@angular/common/http';
 import { UsersService } from 'src/app/services/users.service';
 import { CreateCourseResponseBody } from 'src/app/models/createCourse.response.body';
 import { Router } from '@angular/router';
+import { GetAllCoursesInstructorResponseBody } from 'src/app/models/getAllCoursesInstructor.response.body';
 
 
 
@@ -27,7 +28,7 @@ export class InstructorComponent implements OnInit {
   @Output() formToggled = new EventEmitter<boolean>();
 
 
-
+  courses:Array<GetAllCoursesInstructorResponseBody>=[];
   name: string = '';
   duration: string = '';
   category: string = '';
@@ -52,28 +53,28 @@ export class InstructorComponent implements OnInit {
     // Logic to reject the enrollment
     console.log(`Rejected enrollment for ${enrollment.Sname}`);
   }
-  courses = [{
-    id: 11, name: 'english', category: 'marketing'
-  },
-  {
-    id: 12, name: 'arabic', category: 'marketing',
-  },
-  {
-    id: 13, name: 'english', category: 'marketing',
-  }, {
-    id: 14, name: 'arabic', category: 'marketing',
-  }, {
-    id: 15, name: 'english', category: 'marketing',
-  }, {
-    id: 16, name: 'english', category: 'marketing',
-  }]
+  // courses = [{
+  //   id: 11, name: 'english', category: 'marketing'
+  // },
+  // {
+  //   id: 12, name: 'arabic', category: 'marketing',
+  // },
+  // {
+  //   id: 13, name: 'english', category: 'marketing',
+  // }, {
+  //   id: 14, name: 'arabic', category: 'marketing',
+  // }, {
+  //   id: 15, name: 'english', category: 'marketing',
+  // }, {
+  //   id: 16, name: 'english', category: 'marketing',
+  // }]
   isFormOpen: boolean = false;
   courseForm!: FormGroup;
   selectedCourse: any ;
   instructorId:any;
 
 
-  showDetails(coursesv2:any) {
+  showDetails(coursesv2:GetAllCoursesInstructorResponseBody) {
     // now this function takes the course id and will call the api and return the whole course info
     this.selectedCourse = coursesv2;
     console.log(this.selectedCourse);
@@ -89,9 +90,21 @@ export class InstructorComponent implements OnInit {
   ngOnInit(): void {
     this.courseForm = this.fb.group({});
     this.instructorId=localStorage.getItem('instructorId');
+    this.getAllCourses();
 
   }
 
+
+  getAllCourses(){
+    this.http
+    .get<GetAllCoursesInstructorResponseBody[]>(UsersService.courseUrl + UsersService.getAllCoursesInstructorEndPoint)
+    .subscribe((data) => {
+      if (data != null) {
+        this.courses=data;
+      }
+    });
+
+  }
 
   crateCourse() {
     let body = {
