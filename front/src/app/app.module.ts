@@ -24,6 +24,7 @@ import { AdminComponent } from './screens/admin/admin.component';
     FilterPipe,
     AdminComponent,
 
+
   ],
   imports: [BrowserModule, AppRoutingModule, FormsModule, HttpClientModule,ReactiveFormsModule],
   providers: [],

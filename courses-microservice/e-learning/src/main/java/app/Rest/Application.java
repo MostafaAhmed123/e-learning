@@ -93,7 +93,6 @@ public class Application {
         Courses course = crsService.getCourse(wrapper.course);
         if (course == null)
             return false;
-        System.out.println("hello 1");
         review.setCourse(course);
         review.setRating(wrapper.rating);
         review.setReviewText(wrapper.reviewText);

@@ -43,7 +43,7 @@ export class LoginComponent implements OnInit {
           (data) => {
             console.log(data);
 
-            if (data != null && data.role == 'Instructor') {
+            if (data != null && data.role == 'instructor') {
               this.router.navigateByUrl('/instructor');
                 localStorage.setItem('instructorName',`${data.name}`);
                 localStorage.setItem('instructorId',`${data.id}`);

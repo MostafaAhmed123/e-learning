@@ -1,4 +1,10 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { UsersService } from 'src/app/services/users.service';
+import { HttpClient,HttpErrorResponse, } from '@angular/common/http';
+
+
+
 
 @Component({
   selector: 'app-admin',
@@ -21,7 +27,7 @@ export class AdminComponent {
 
   showEditForm: boolean = false;
   editedUser: any;
-  
+
 
   ngOnInit(): void {
     // this.loadUsers();
@@ -45,7 +51,7 @@ export class AdminComponent {
   }
   editUser(user: any) {
     //change the user list here and then call it ngonit
-    this.editedUser = { ...user }; 
+    this.editedUser = { ...user };
     this.showEditForm = true;
   }
 

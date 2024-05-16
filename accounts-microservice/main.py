@@ -6,11 +6,13 @@ from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import OperationalError
 from werkzeug.security import check_password_hash, generate_password_hash
 import re
+from flask_cors import CORS
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://root:mostafa@database:3306/users"
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://root:mostafa@localhost:3306/users"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 
 class User(db.Model):
