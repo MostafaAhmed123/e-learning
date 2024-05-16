@@ -36,8 +36,8 @@
         </div>
 
         <div class="review-actions">
-          <button (click)="approveCourse(course)">Approve</button>
-          <button (click)="rejectCourse(course)">Reject</button>
+          <button (click)="editCourse(course)">edit</button>
+          <button (click)="removeCourse(course)">remove</button>
         </div>
       </div>
     </div>
@@ -45,7 +45,6 @@
   
 
   <div class="edit-form" *ngIf="showEditForm">
-    <h3>Edit User</h3>
     <form (submit)="submitEdit()">
       <label>Name:</label>
       <input type="text" [(ngModel)]="editedUser.name" required name="name"><br>

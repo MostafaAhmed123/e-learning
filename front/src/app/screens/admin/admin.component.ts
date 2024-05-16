@@ -66,11 +66,11 @@ export class AdminComponent {
   //   });
   // }
 
-  approveCourse(course: any) {
+  editCourse(course: any) {
     // Implement approve course functionality
   }
 
-  rejectCourse(course: any) {
+  removeCourse(course: any) {
     // Implement reject course functionality
   }
 }

@@ -63,9 +63,40 @@
       </div>
     </div>
  
+    <div *ngIf="pastEnrollments.length > 0">
+      <h2>Past Enrollments</h2>
+      <div class="enrollment" *ngFor="let enrollment of pastEnrollments">
+        <div class="course-info">
+          <h3>{{ enrollment.courseName }}</h3>
+          <p>Category: {{ enrollment.category }}</p>
+          <p>Duration: {{ enrollment.duration }}</p>
+          <p>Rating: {{ enrollment.rating }}</p>
+          <p>Capacity: {{ enrollment.capacity }}</p>
+          <p>Enrolled Students: {{ enrollment.enrolledStudents }}</p>
+          <button (click)="enrollment.showReviewForm = !enrollment.showReviewForm" class="review-button">Make Review and Rating</button>
+        </div>
+        <div *ngIf="enrollment.showReviewForm">
+          <form>
+            <div>
+              <label for="rating">Rating:</label>
+              <input type="number" id="rating" name="rating" [(ngModel)]="enrollment.rating">
+            </div>
+            <div>
+              <label for="review">Review:</label>
+              <textarea id="review" name="review" [(ngModel)]="enrollment.review"></textarea>
+            </div>
+            <button type="submit" class="submit-button">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="currentEnrollments.length === 0 && pastEnrollments.length === 0">
+      <p>No enrollments found.</p>
+    </div>
+    
     
 
-    <div *ngIf="pastEnrollments.length > 0">
+    <!-- <div *ngIf="pastEnrollments.length > 0">
       <h2>Past Enrollments</h2>
       <div class="enrollment" *ngFor="let enrollment of pastEnrollments">
         <div class="course-info">
@@ -95,7 +126,7 @@
     <div *ngIf="currentEnrollments.length === 0 && pastEnrollments.length === 0">
       <p>No enrollments found.</p>
     </div>
-  </div>
+  </div> -->
     
     <!-- <div *ngIf="pastEnrollments.length > 0">
       <h2>Past Enrollments</h2>
