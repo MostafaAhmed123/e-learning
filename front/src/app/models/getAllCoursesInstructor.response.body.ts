@@ -6,7 +6,10 @@ export type GetAllCoursesInstructorResponseBody = {
     capacity?:Number;
     rating?:Number;
     approvedByAdmin?:boolean;
-    status?:String;//alluppercase
+    status?:string;//alluppercase
+    category?:string;
+    instructorId?:Number;
+    populairty?:Number;
   };
 
 

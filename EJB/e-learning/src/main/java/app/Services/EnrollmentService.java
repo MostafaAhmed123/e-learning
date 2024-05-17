@@ -118,25 +118,32 @@ public class EnrollmentService {
         return true;
     }
 
-    public List<CourseEnrollments> getInstructorEnrollments(Long instructorId){
+    public List<CourseEnrollments> getInstructorEnrollments(Long instructorId) {
         List<CourseEnrollments> enrollments = null;
-        try{
+        try {
             Client client = ClientBuilder.newClient();
             WebTarget target = client.target("http://localhost:8080").path("course-microservice-1.0/api/courses");
 
-        List<CourseDTO> courses = target.request(MediaType.APPLICATION_JSON).get(new GenericType<List<CourseDTO>>(){});
-        enrollments = new ArrayList<>();
-        for(CourseDTO course : courses){
-            if(course.instructorId == instructorId)
-                enrollments.addAll(this.getCourseEnrollments(course.courseId));
-        }
-        }catch(Exception e){
+            List<CourseDTO> courses = target.request(MediaType.APPLICATION_JSON)
+                    .get(new GenericType<List<CourseDTO>>() {
+                    });
+            // System.out.println(courses.size());
+            enrollments = new ArrayList<>();
+            System.out.println(instructorId);
+            for (CourseDTO course : courses) {
+                // System.out.println(course.instructorId);
+                if (Long.toString(course.instructorId).equals(Long.toString(instructorId))) {
+                    enrollments.addAll(this.getCourseEnrollments(course.courseId));
+                    System.out.println("true");
+                }
+            }
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
         return enrollments;
     }
 
-    public List<CourseEnrollments> getCourseEnrollments(Long course){
+    public List<CourseEnrollments> getCourseEnrollments(Long course) {
         Session session = null;
         List<CourseEnrollments> enrollments = null;
         try {
@@ -154,6 +161,7 @@ public class EnrollmentService {
         }
         return enrollments;
     }
+
     public List<CourseEnrollments> getEnrollments() {
         Session session = null;
         List<CourseEnrollments> enrollments = null;
@@ -191,5 +199,41 @@ public class EnrollmentService {
                 HibernateUtil.closeSession(session);
         }
         return enrollments;
+    }
+
+    public List<List<CourseEnrollments>> getPastCurrentEnrollments(Long student) {
+        Session session = null;
+        List<CourseEnrollments> enrollments = null, current = new ArrayList<>(), past = new ArrayList<>();
+        List<List<CourseEnrollments>> enrollmentsList = new ArrayList<List<CourseEnrollments>>();
+        try {
+            session = HibernateUtil.getSession();
+            String hql = "FROM CourseEnrollments ce WHERE ce.id.userId =:studentid";
+            Query<CourseEnrollments> query = session.createQuery(hql, CourseEnrollments.class);
+            query.setParameter("studentid", student);
+            enrollments = query.getResultList();
+
+            for (CourseEnrollments enrollment : enrollments) {
+                Client client = ClientBuilder.newClient();
+                WebTarget target = client.target("http://localhost:8080")
+                        .path("course-microservice-1.0/api/course")
+                        .queryParam("id", enrollment.getId().getCourseId());
+                String response = target.request().get(String.class);
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode jsonResponse = objectMapper.readTree(response);
+                String status = jsonResponse.get("status").asText();
+                if(status.equals("CURRENT"))
+                    current.add(enrollment);
+                else
+                    past.add(enrollment);
+            }
+            enrollmentsList.add(current);
+            enrollmentsList.add(past);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (session != null)
+                HibernateUtil.closeSession(session);
+        }
+        return enrollmentsList;
     }
 }

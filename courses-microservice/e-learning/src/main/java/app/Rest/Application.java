@@ -69,9 +69,8 @@ public class Application {
 
     @GET
     @Path("search")
-    public List<Courses> search(@QueryParam(value = "course") String course,
-            @QueryParam(value = "byName") boolean byName, @QueryParam(value = "sorted") boolean sorted) {
-        return crsService.search(course, byName, sorted);
+    public List<Courses> search(@QueryParam(value = "course") String course, @QueryParam(value = "sorted") boolean sorted) {
+        return crsService.search(course, sorted);
     }
 
     @DELETE

@@ -66,6 +66,12 @@ public class Application {
     }
 
     @GET
+    @Path("pastcurrentenrollments")
+    public List<List<CourseEnrollments>> getcurrentpastenrollments(@QueryParam(value = "id") Long id){
+        return enrollService.getPastCurrentEnrollments(id);
+    }
+
+    @GET
     @Path("instructorenrollments")
     public List<CourseEnrollments> getInstructorEnrollments(@QueryParam(value = "id") Long id){
         return enrollService.getInstructorEnrollments(id);

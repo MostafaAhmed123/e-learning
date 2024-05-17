@@ -88,10 +88,13 @@ public class InstructorService {
         String response = target.request(MediaType.APPLICATION_JSON).get(String.class);
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonResponse;
+        JsonNode courseNode;
         try {
             jsonResponse = objectMapper.readTree(response);
+
             Long capacity = jsonResponse.get("capacity").asLong();
             Long popularity = jsonResponse.get("popularity").asLong();
+            courseNode = jsonResponse;
             enrollment.setStatus((wrapper.accept
                     && capacity > enrollments.size())
                             ? app.Util.Enums.RequestStatus.ACCEPTED
@@ -106,10 +109,11 @@ public class InstructorService {
                 return false;
             session.update(enrollment);
             if (wrapper.accept) {
+                System.out.println(popularity);
                 popularity++;
-                ((ObjectNode) jsonResponse).put("popularity", popularity);
-                String updatedJsonString = objectMapper.writeValueAsString(jsonResponse);
-                target = client.target("http://localhost:8080").path("course-microservice-1.0/api/update");
+                ((ObjectNode) courseNode).put("popularity", popularity);
+                String updatedJsonString = objectMapper.writeValueAsString(courseNode);
+                target = client.target("http://localhost:8080").path("course-microservice-1.0/api/update").queryParam("id", 5);
                 System.out.println(updatedJsonString);
                 Response res = target.request(MediaType.APPLICATION_JSON)
                         .put(Entity.entity(updatedJsonString, MediaType.APPLICATION_JSON));

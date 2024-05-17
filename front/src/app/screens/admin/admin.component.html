@@ -30,21 +30,26 @@
     <h2>Course Review</h2>
 
     <div class="course-list">
-      <div class="course" *ngFor="let course of courses">
+      <li  *ngFor="let course of courses">
+        <div class="course" >
         <div class="course-info">
           <h3>{{ course.name }}</h3>
+          <p>ID: {{course.courseId}}</p>
           <p>Duration: {{ course.duration }}</p>
           <p>Category: {{ course.category }}</p>
           <p>Status: {{ course.status }}</p>
           <p>Capacity: {{ course.capacity }}</p>
-        </div>
+          <p> approvedByAdmin: {{course.approvedByAdmin}}</p>
+          <p> Content: {{course.content}}</p>
 
+        </div>
         <div class="review-actions">
-          <button (click)="editCourse(course)">edit</button>
+          <button (click)="editCourseCheck(course)">Edit</button>
           <button (click)="removeCourse(course)">remove</button>
         </div>
       </div>
-    </div>
+      </li>
+      </div>
   </div>
 
   <div class="edit-form" *ngIf="showCourseEditForm">
@@ -55,16 +60,20 @@
       <input type="text" [(ngModel)]="editedCourse.duration" required name="duration"><br>
       <label>Category:</label>
       <input type="text" [(ngModel)]="editedCourse.category" required name="category"><br>
-      <label>Category:</label>
-      <input type="text" [(ngModel)]="editedCourse.category" required name="category"><br>
-      <label>Category:</label>
-      <input type="text" [(ngModel)]="editedCourse.category" required name="category"><br>
-      <label *ngIf="editedCourse.role === 'instructor'">Years of Experience:</label>
-      <input *ngIf="editedCourse.role === 'instructor'" type="number" [(ngModel)]="editedCourse.years_of_experience" required name="years_of_experience"><br>
+      <label>Status:</label>
+      <input type="text" [(ngModel)]="editedCourse.status" required name="status"><br>
+      <label>Capacity:</label>
+      <input type="number" [(ngModel)]="editedCourse.capacity" required name="capacity"><br>
+      <label>approvedByAdmin:</label>
+      <input type="text" [(ngModel)]="editedCourse.approvedByAdmin" required name="approvedByAdmin"><br>
+      <label>Content:</label>
+      <input type="text" [(ngModel)]="editedCourse.content" required name="content"><br>
       <button type="submit">Save Changes</button>
-      <button type="button" (click)="cancelEditv2()">Cancel</button>
+      <button type="button" (click)="cancelCourseEdit()">Cancel</button>
     </form>
   </div>
+
+
 
   <div class="edit-form" *ngIf="showEditForm">
     <form (submit)="editUserConfirm()">

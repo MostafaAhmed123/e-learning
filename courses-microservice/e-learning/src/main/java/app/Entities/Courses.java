@@ -32,6 +32,7 @@ public class Courses {
     @Enumerated(EnumType.STRING)
     private Status status;
     private String category;
+    private Long popularity;
 
     @Transient
     private double rating;
@@ -52,7 +53,6 @@ public class Courses {
         this.popularity = popularity;
     }
 
-    private Long popularity;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Reviews> course_reviews;

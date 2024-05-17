@@ -21,7 +21,7 @@ import app.Util.HibernateUtil;
 
 @Stateless
 public class CourseService {
-    public Courses getCourseForAdmin(Long id){
+    public Courses getCourseForAdmin(Long id) {
         Session session = null;
         Courses course = null;
         try {
@@ -38,6 +38,7 @@ public class CourseService {
         }
         return course;
     }
+
     public Courses getCourse(Long id) {
         Courses course = this.getCourseForAdmin(id);
         return course != null && course.getApprovedByAdmin() ? course : null;
@@ -55,6 +56,8 @@ public class CourseService {
     public boolean delete(Long id, Long admin) {
         Transaction transaction = null;
         try {
+            System.err.println(id);
+            System.err.println(admin);
             Session session = HibernateUtil.getSession();
             transaction = session.beginTransaction();
             Courses course = this.getCourseForAdmin(id);
@@ -62,8 +65,8 @@ public class CourseService {
             WebTarget target = client.target("http://localhost:5000")
                     .path("usertype")
                     .queryParam("id", admin);
-                String response = target.request(MediaType.APPLICATION_JSON).get(String.class);
-                ObjectMapper objectMapper = new ObjectMapper();
+            String response = target.request(MediaType.APPLICATION_JSON).get(String.class);
+            ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonResponse = objectMapper.readTree(response);
             String role = jsonResponse.get("role").asText();
             if (course == null || !role.equals("admin"))
@@ -86,11 +89,14 @@ public class CourseService {
             Session session = HibernateUtil.getSession();
             transaction = session.beginTransaction();
             Courses course = this.getCourseForAdmin(updatedCourse.getCourseId());
+            System.out.println(updatedCourse.getCourseId());
+            System.out.println(updatedCourse.getApprovedByAdmin());
+            System.out.println(updatedCourse.getCategory());
             Client client = ClientBuilder.newClient();
             WebTarget target = client.target("http://localhost:5000")
                     .path("usertype")
                     .queryParam("id", id);
-                String response = target.request(MediaType.APPLICATION_JSON).get(String.class);
+            String response = target.request(MediaType.APPLICATION_JSON).get(String.class);
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonResponse = objectMapper.readTree(response);
             String role = jsonResponse.get("role").asText();
@@ -124,8 +130,8 @@ public class CourseService {
             WebTarget target = client.target("http://localhost:5000")
                     .path("usertype")
                     .queryParam("id", course.getInstructorId());
-                String response = target.request(MediaType.APPLICATION_JSON).get(String.class);
-                System.out.println(response);
+            String response = target.request(MediaType.APPLICATION_JSON).get(String.class);
+            System.out.println(response);
             Session session = HibernateUtil.getSession();
             transaction = session.beginTransaction();
             ObjectMapper objectMapper = new ObjectMapper();
@@ -145,24 +151,20 @@ public class CourseService {
         return true;
     }
 
-    public List<Courses> search(String searchTerm, boolean byName, boolean sorted) {
+    public List<Courses> search(String searchTerm, boolean sorted) {
         Session session = null;
         List<Courses> courses = null;
         try {
             session = HibernateUtil.getSession();
             String hql;
             Query<Courses> query;
-            if (byName) {
-                hql = "FROM Courses c WHERE c.name LIKE :searchTerm AND c.approvedByAdmin = true";
-                query = session.createQuery(hql, Courses.class);
-                query.setParameter("searchTerm", "%" + searchTerm + "%");
-            } else {
-                hql = "FROM Courses c WHERE c.category LIKE :searchTerm AND c.approvedByAdmin = true";
-                query = session.createQuery(hql, Courses.class);
-                query.setParameter("searchTerm", searchTerm);
-            }
+
+            hql = "FROM Courses c WHERE (c.name LIKE :searchTerm OR c.category LIKE :cat) AND c.approvedByAdmin = true";
+            query = session.createQuery(hql, Courses.class);
+            query.setParameter("searchTerm", "%" + searchTerm + "%");
+            query.setParameter("cat", "%" + searchTerm + "%");
             courses = query.getResultList();
-            if(sorted){
+            if (sorted) {
                 courses = this.sortByRatingDesc(courses);
             }
         } catch (Exception e) {
@@ -181,7 +183,7 @@ public class CourseService {
         return sortedCourses;
     }
 
-    public List<Courses> notApprovedYet(){
+    public List<Courses> notApprovedYet() {
         Session session = HibernateUtil.getSession();
         List<Courses> courses = null;
         try {
@@ -197,7 +199,7 @@ public class CourseService {
         return courses;
     }
 
-    public List<Courses> getAll(){
+    public List<Courses> getAll() {
         Session session = HibernateUtil.getSession();
         List<Courses> courses = null;
         try {
@@ -238,19 +240,22 @@ public class CourseService {
 
     public List<Courses> getAllCoursesSortedByRating() {
         try (Session session = HibernateUtil.getSession()) {
-            return session.createQuery("SELECT c FROM Courses c LEFT JOIN c.course_reviews r GROUP BY c.courseId ORDER BY AVG(r.rating) DESC", Courses.class)
-            .getResultList();
+            return session.createQuery(
+                    "SELECT c FROM Courses c LEFT JOIN c.course_reviews r GROUP BY c.courseId ORDER BY AVG(r.rating) DESC",
+                    Courses.class)
+                    .getResultList();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public List<Courses> getInstructorCourses(Long id){
+    public List<Courses> getInstructorCourses(Long id) {
         Session session = HibernateUtil.getSession();
         List<Courses> courses = null;
         try {
-            Query<Courses> query = session.createQuery("FROM Courses c WHERE c.approvedByAdmin = true AND c.instructorId = :id", Courses.class);
+            Query<Courses> query = session.createQuery(
+                    "FROM Courses c WHERE c.approvedByAdmin = true AND c.instructorId = :id", Courses.class);
             query.setParameter("id", id);
             courses = query.getResultList();
         } catch (Exception e) {

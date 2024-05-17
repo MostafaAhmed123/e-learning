@@ -13,6 +13,8 @@ import { UsersService } from 'src/app/services/users.service';
 import { CreateCourseResponseBody } from 'src/app/models/createCourse.response.body';
 import { Router } from '@angular/router';
 import { GetAllCoursesInstructorResponseBody } from 'src/app/models/getAllCoursesInstructor.response.body';
+import { GetEnrollmentsInstructorResponseBody } from 'src/app/models/getEnrollmentsInstructor.response.body';
+import { GetEnrollmentsHelperResponseBody } from 'src/app/models/getEnrollmentsHelper.response.body';
 
 
 
@@ -27,8 +29,9 @@ import { GetAllCoursesInstructorResponseBody } from 'src/app/models/getAllCourse
 export class InstructorComponent implements OnInit {
   @Output() formToggled = new EventEmitter<boolean>();
 
-
+  //lw bazet a3mlha response body lwa7do
   courses:Array<GetAllCoursesInstructorResponseBody>=[];
+  sorted :boolean=false;
   name: string = '';
   duration: string = '';
   category: string = '';
@@ -38,40 +41,53 @@ export class InstructorComponent implements OnInit {
   reviews: string[] = [];
   searchText: any;
   courseContent: any;
-  enrollments:any [] = [
-    {  Sname: 'John Doe', email: 'john@example.com' , course: 'Introduction to Programming' },
-    { Sname: 'Jane Smith', email: 'jane@example.com' , course: 'Web Development' },
-    { Sname: 'Ramy Waleed', email: 'ramy@example.com' , course: 'Angular' }
-    // Add more enrollments here
-  ];
+  accept:boolean=false;
+
+  enrollments:Array<GetEnrollmentsHelperResponseBody>=[];
   acceptEnrollment(enrollment: any) {
-    // Logic to accept the enrollment
-    console.log(`Accepted enrollment for ${enrollment.Sname}`);
+    this.accept=true;
+    let body = {
+      studentId:enrollment.id?.userId,
+      courseId:enrollment.id?.courseId,
+      accept:this.accept
+
+    };
+
+    const url = `${UsersService.enrollmentUrl}${UsersService.acceptOrDenyApi}?id=${this.instructorId}`;
+    this.http.put<boolean>(url,body).subscribe((data) => {
+      if (data != null) {
+        console.log(data);
+        location.reload();
+      }
+    });
+
+
   }
 
   rejectEnrollment(enrollment: any) {
-    // Logic to reject the enrollment
-    console.log(`Rejected enrollment for ${enrollment.Sname}`);
+    this.accept=false;
+    let body = {
+      studentId:enrollment.id?.userId,
+      courseId:enrollment.id?.courseId,
+      accept:this.accept
+
+    };
+
+    const url = `${UsersService.enrollmentUrl}${UsersService.acceptOrDenyApi}?id=${this.instructorId}`;
+    this.http.put<boolean>(url,body).subscribe((data) => {
+      if (data != null) {
+        console.log(data);
+        location.reload();
+
+      }
+    });
   }
-  // courses = [{
-  //   id: 11, name: 'english', category: 'marketing'
-  // },
-  // {
-  //   id: 12, name: 'arabic', category: 'marketing',
-  // },
-  // {
-  //   id: 13, name: 'english', category: 'marketing',
-  // }, {
-  //   id: 14, name: 'arabic', category: 'marketing',
-  // }, {
-  //   id: 15, name: 'english', category: 'marketing',
-  // }, {
-  //   id: 16, name: 'english', category: 'marketing',
-  // }]
+
   isFormOpen: boolean = false;
   courseForm!: FormGroup;
   selectedCourse: any ;
   instructorId:any;
+
 
 
   showDetails(coursesv2:GetAllCoursesInstructorResponseBody) {
@@ -91,6 +107,7 @@ export class InstructorComponent implements OnInit {
     this.courseForm = this.fb.group({});
     this.instructorId=localStorage.getItem('instructorId');
     this.getAllCourses();
+    this.getEnrollments();
 
   }
 
@@ -105,6 +122,15 @@ export class InstructorComponent implements OnInit {
     });
 
   }
+  searchBySort(){
+    this.sorted != this.sorted;
+    const url = `${UsersService.courseUrl}${UsersService.searchBySort}?course=${this.searchText}&sorted=${this.sorted}`;
+    this.http.get<GetAllCoursesInstructorResponseBody[]>(url).subscribe((data) => {
+      if (data != null) {
+        console.log(data);
+      }
+    });
+  }
 
   crateCourse() {
     let body = {
@@ -115,16 +141,6 @@ export class InstructorComponent implements OnInit {
       capacity:this.capacity,
       category:this.category,};
 
-      /*
-      {
-    "name": "oop",
-    "duration": 1,
-    "content": "bla bla bla",
-    "capacity": 150,
-    "category": "CS",
-    "instructorId": 1
-}
-      */
     this.http.post<CreateCourseResponseBody>(UsersService.courseUrl+UsersService.createCourseEndPoint,body).subscribe((data)=>{
       if(data)
         alert("course created successfully");
@@ -138,8 +154,16 @@ export class InstructorComponent implements OnInit {
     });
 }
 
-
-
+//getEnrollmentsInstructorApi
+  getEnrollments(){
+    const url = `${UsersService.enrollmentUrl}${UsersService.getEnrollmentsInstructorApi}?id=${this.instructorId}`;
+    this.http.get<GetEnrollmentsHelperResponseBody[]>(url).subscribe((data) => {
+      if (data != null) {
+        console.log(data);
+        this.enrollments=data;
+      }
+    });
+  }
 
   openForm() {
     this.isFormOpen = !this.isFormOpen;
@@ -153,8 +177,6 @@ export class InstructorComponent implements OnInit {
 
   }
 
-  CreateCourseApi(){
 
-  }
 
 }

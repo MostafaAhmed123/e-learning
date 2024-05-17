@@ -4,6 +4,8 @@ import { UsersService } from 'src/app/services/users.service';
 import { HttpClient,HttpErrorResponse,HttpHeaders,HttpParams } from '@angular/common/http';
 import { GetAllUsersAdminResponseBody } from 'src/app/models/getAllUsersAdmin.response.body';
 import { EditedUserAdminBody } from 'src/app/models/editedUserAdmin.body';
+import { GetAllCoursesInstructorResponseBody } from 'src/app/models/getAllCoursesInstructor.response.body';
+
 
 
 
@@ -15,7 +17,7 @@ import { EditedUserAdminBody } from 'src/app/models/editedUserAdmin.body';
 })
 export class AdminComponent {
   constructor( private router: Router, private http: HttpClient) { }
-
+  static adminId = 5;
   // users = [{name:'john',email:'amr@gmail.com',affiliation:'web',role:'student'},
   // {name:'john',email:'amr@gmail.com',affiliation:'web',role:'instructor',experience:'1'},
   // {name:'john',email:'amr@gmail.com',affiliation:'web',role:'student'},
@@ -23,14 +25,11 @@ export class AdminComponent {
   // ];
 
  users: Array<GetAllUsersAdminResponseBody>=[];
+ courses:Array<GetAllCoursesInstructorResponseBody>=[];
  editedUser: any = {};
  editedCourse: any = {};
   editedSucess:string="";
-  courses = [{name: 'Introduction to Programming', category: 'Programming', duration: '6 weeks', rating: 4.5, capacity: 50, enrolledStudents: 35,status:"pending",},
-  {name: 'Introduction to Programming', category: 'Programming', duration: '6 weeks', rating: 4.5, capacity: 50, enrolledStudents: 35,status:"pending",},
-  {name: 'Introduction to Programming', category: 'Programming', duration: '6 weeks', rating: 4.5, capacity: 50, enrolledStudents: 35,status:"pending",},
-  {name: 'Introduction to Programming', category: 'Programming', duration: '6 weeks', rating: 4.5, capacity: 50, enrolledStudents: 35,status:"pending",},
-  ];
+
 
   showEditForm: boolean = false;
   showCourseEditForm: boolean = false;
@@ -41,7 +40,7 @@ export class AdminComponent {
     // this.loadUsers();
     // this.loadCourses();
     this.getUsers();
-
+    this.getAllCourses();
 
   }
 
@@ -71,19 +70,21 @@ if(data!=null){
 }
 });
 }
-
-cancelEditv2(){
-  this.showCourseEditForm=false;
+// allCoursesAdminEndPoint
+getAllCourses(){
+  this.http.get<GetAllUsersAdminResponseBody[]>(UsersService.courseUrl+UsersService.allCoursesAdminEndPoint).subscribe((data)=>{
+    if(data!=null){
+      this.courses=data;
+      console.log(data);
+    }
+    });
 }
+
   cancelEdit() {
     this.showEditForm = false;
   }
 
-  submitEdit() {
-    // Implement save changes functionality
-    console.log("Edited User:", this.editedUser);
-    this.showEditForm = false;
-  }
+
   /*
   {
     "name": "Updated Name",
@@ -151,18 +152,60 @@ cancelEditv2(){
   //     this.courses = courses;
   //   });
   // }
-  editCourseConfirm(){
 
+  //editCoursesAdminEndPoint
+  editCourseConfirm(){
+    const index = this.courses.findIndex(course => course?.courseId === this.editedCourse?.courseId);
+    console.log(this.editedCourse);
+    if (index !== -1) {
+      this.courses[index] = { ...this.editedCourse };
+    }
+
+ let body={
+  courseId:this.editedCourse.courseId,
+  name:this.editedCourse.name,
+  duration:this.editedCourse.duration,
+  content:this.editedCourse.content,
+  capacity:this.editedCourse.capacity,
+  approvedByAdmin:this.editedCourse.approvedByAdmin,
+  popularity:this.editedCourse.populairty,
+  instructorId:this.editedCourse.instructorId,
+  status:this.editedCourse.status,
+  category:this.editedCourse.category,
+ }
+    // Get the id from the edited user
+    const id = this.editedCourse?.courseId;
+    if (!id) {
+      // Handle error condition when id is not available
+      return;
+    }
+    const url = `${UsersService.courseUrl}${UsersService.editCoursesAdminEndPoint}?id=${AdminComponent.adminId}`;
+    this.http.put<string>(url,body).subscribe((data) => {
+      if (data != null) {
+        location.reload();
+        console.log(data);
+      }
+    });
 
   }
-  editCourse(course: any) {
+  cancelCourseEdit(){
+    this.showCourseEditForm=false;
+  }
+  editCourseCheck(course: any) :void{
     // Implement approve course functionality
     this.editCourseConfirm();
-
+    this.editedCourse = { ...course };
     this.showCourseEditForm=true;
   }
 
   removeCourse(course: any) {
-    // Implement reject course functionality
+    const id = course.courseId;
+    const url = `${UsersService.courseUrl}${UsersService.deleteCoursesAdminEndPoint}?course=${id}&id=${AdminComponent.adminId}`;
+    this.http.delete<string>(url).subscribe((data) => {
+      if (data != null) {
+        location.reload();
+        console.log(data);
+      }
+    });
   }
 }

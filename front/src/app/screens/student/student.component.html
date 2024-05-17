@@ -6,23 +6,28 @@
 <div class="container2">
   <div class="row">
     <div class="search-course">
+      <div class="container px-5 py-2 mx-auto flex items-center justify-end">
+        <button (click)="saerchBySort()" class="create-button">
+          sort
+        </button>
+      </div>
       <input type="text" name="search" [(ngModel)]="searchText" placeholder="Search by name or category">
     </div>
     <table class="table table-striped">
       <thead>
         <tr>
-          <th>Id</th>
           <th>Name</th>
           <th>Category</th>
-          <th>Actions</th> 
+          <th>Ratings</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let course of courses | filter: searchText">
-          <td>{{ course.id }}</td>
+        <tr *ngFor="let course of courses | filter: searchText " (click)="showDetails(course)">
           <td>{{ course.name }}</td>
           <td>{{ course.category }}</td>
-          <td><button (click)="enroll(course.id)" class="enroll-button">Enroll</button></td> 
+          <td>{{course.rating}}</td>
+          <td><button (click)="enroll(course.id)" class="enroll-button">Enroll</button></td>
         </tr>
       </tbody>
     </table>
@@ -36,18 +41,19 @@
   </div>
   <div class="card-body">
     <h5 class="card-title">{{ selectedCourse.name }}</h5>
+    <p class="card-text">Id:{{selectedCourse.id}} </p>
     <p class="card-text">Category: {{ selectedCourse.category }}</p>
-    <p class="card-text">Duration: {{ selectedCourse.Duration }}</p>
-    <p class="card-text">Rating: {{ selectedCourse.Rating }}</p>
-    <p class="card-text">Capacity: {{ selectedCourse.Capacity }}</p>
-    <p class="card-text">EnrolledStudents: {{ selectedCourse.EnrolledStudents }}</p>
+    <p class="card-text">Duration: {{ selectedCourse.duration }}</p>
+    <p class="card-text">Capacity: {{ selectedCourse.capacity }}</p>
+    <p class="card-text">Content: {{ selectedCourse.content }}</p>
+    <p class="card-text">popularity: {{ selectedCourse.popularity }}</p>
   </div>
 </div>
 
 
 <div class="container">
     <h1>My Enrollments</h1>
-    
+
     <div *ngIf="currentEnrollments.length > 0">
       <h2>Current Enrollments</h2>
       <div class="enrollment" *ngFor="let enrollment of currentEnrollments">
@@ -62,7 +68,7 @@
         </div>
       </div>
     </div>
- 
+
     <div *ngIf="pastEnrollments.length > 0">
       <h2>Past Enrollments</h2>
       <div class="enrollment" *ngFor="let enrollment of pastEnrollments">
@@ -93,8 +99,8 @@
     <div *ngIf="currentEnrollments.length === 0 && pastEnrollments.length === 0">
       <p>No enrollments found.</p>
     </div>
-    
-    
+
+
 
     <!-- <div *ngIf="pastEnrollments.length > 0">
       <h2>Past Enrollments</h2>
@@ -127,7 +133,7 @@
       <p>No enrollments found.</p>
     </div>
   </div> -->
-    
+
     <!-- <div *ngIf="pastEnrollments.length > 0">
       <h2>Past Enrollments</h2>
       <div class="enrollment" *ngFor="let enrollment of pastEnrollments">
@@ -141,7 +147,7 @@
         </div>
       </div>
     </div>
-    
+
     <div *ngIf="currentEnrollments.length === 0 && pastEnrollments.length === 0">
       <p>No enrollments found.</p>
     </div>
