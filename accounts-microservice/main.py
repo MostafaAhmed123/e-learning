@@ -193,7 +193,7 @@ def get_user_type():
         user = User.query.filter_by(id=id).one()
         return jsonify({"role": user.role})
     except NoResultFound:
-        abort(404, "User not found")
+        return jsonify({"role": "none"})
 
 
 def init_fun():

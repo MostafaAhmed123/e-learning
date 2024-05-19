@@ -219,7 +219,9 @@ public class CourseService {
         Session session = HibernateUtil.getSession();
         List<Courses> courses = null;
         try {
-            Query<Courses> query = session.createQuery("FROM Courses c WHERE c.approvedByAdmin = true", Courses.class);
+            Query<Courses> query = session.createQuery(
+                    "FROM Courses c WHERE c.approvedByAdmin = true", Courses.class);
+                    // query.setParameter("stat", app.Util.Enums.Status.CURRENT);
             courses = query.getResultList();
         } catch (Exception e) {
             System.out.println("Error in Browsing " + e.getMessage());

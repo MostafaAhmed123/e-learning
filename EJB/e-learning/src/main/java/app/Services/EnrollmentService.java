@@ -2,7 +2,7 @@ package app.Services;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import app.Models.Notifications;
 import javax.ejb.Stateless;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -34,6 +34,8 @@ public class EnrollmentService {
     public boolean enroll(EnrollmentRequestDTO enrollrequest) {
         Transaction transaction = null;
         try {
+            System.out.println(enrollrequest.courseId);
+            System.out.println(enrollrequest.studentId);
             Client client = ClientBuilder.newClient();
             WebTarget target = client.target("http://localhost:5000")
                     .path("usertype")
@@ -51,7 +53,8 @@ public class EnrollmentService {
             String course = jsonResponse.get("status").asText();
             boolean status = jsonResponse.get("approvedByAdmin").asBoolean();
             String stat = jsonResponse.get("status").asText();
-            if (course.equals("DONE") || !role.equals("student") || !status || stat.equals("DONE"))
+            System.out.println(role);
+            if (course.equals("DONE") || role.isEmpty() || !role.equals("student") || !status || stat.equals("DONE"))
                 return false;
             CourseEnrollments enrollment = new CourseEnrollments();
             CourseEnrollmentId id = new CourseEnrollmentId(enrollrequest.studentId, enrollrequest.courseId);
@@ -108,6 +111,11 @@ public class EnrollmentService {
                     .put(Entity.entity(updatedJsonString, MediaType.APPLICATION_JSON));
             if (res.getStatus() != 200)
                 throw new Exception("responce code: " + res.getStatus());
+            NotificationService notifiy = new NotificationService();
+            Notifications notification = new Notifications();
+            notification.setNotification("your enrollment request to course " + wrapper.courseId + " has been "
+                    + "canceled successfully");
+            notifiy.createNotification(notification);
             transaction.commit();
             HibernateUtil.closeSession(session);
         } catch (Exception e) {
@@ -221,9 +229,9 @@ public class EnrollmentService {
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode jsonResponse = objectMapper.readTree(response);
                 String status = jsonResponse.get("status").asText();
-                if(status.equals("CURRENT"))
+                if (status.equals("CURRENT") && enrollment.getStatus() == app.Util.Enums.RequestStatus.ACCEPTED)
                     current.add(enrollment);
-                else
+                else if (status.equals("DONE") && enrollment.getStatus() == app.Util.Enums.RequestStatus.ACCEPTED)
                     past.add(enrollment);
             }
             enrollmentsList.add(current);

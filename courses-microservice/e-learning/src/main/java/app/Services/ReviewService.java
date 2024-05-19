@@ -65,7 +65,7 @@ public class ReviewService {
             String hql = "FROM Reviews r WHERE r.studentId = :id AND r.course.courseId =:crs";
             Query<Reviews> query = session.createQuery(hql, Reviews.class);
             query.setParameter("id", review.getStudentId());
-            query.setParameter("crs", review.getCourse());
+            query.setParameter("crs", review.getCourse().getCourseId());
             List<Reviews> tmp = query.getResultList();
             Client client = ClientBuilder.newClient();
             WebTarget target = client.target("http://localhost:5000")
@@ -75,13 +75,23 @@ public class ReviewService {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonResponse = objectMapper.readTree(response);
             String role = jsonResponse.get("role").asText();
-            target = client.target("http://localhost:8080").path("E-LEARNING-1.0/studentenrollments").queryParam("id",
-                    review.getStudentId());
-            List<EnrollmentsDTO> enrollments = target.request(MediaType.APPLICATION_JSON).get(new GenericType<List<EnrollmentsDTO>>(){});
+            System.out.println(role);
+            target = client.target("http://localhost:8080")
+                    .path("E-LEARNING-1.0/api/studentenrollments")
+                    .queryParam("id", review.getStudentId());
+            List<EnrollmentsDTO> enrollments = target.request(MediaType.APPLICATION_JSON)
+                    .get(new GenericType<List<EnrollmentsDTO>>() {
+                    });
+            System.out.println(enrollments.size());
             boolean found = false;
-            for(EnrollmentsDTO enrollment : enrollments)
-                if(enrollment.getUserId() == review.getStudentId())
+
+            System.out.println(enrollments.get(0).getId().getUserId());
+            System.out.println(review.getStudentId());
+            for (EnrollmentsDTO enrollment : enrollments)
+                if (enrollment.getId().getCourseId() == review.getCourse().getCourseId()) {
                     found = true;
+                }
+            // System.out.println(found);
             if (!tmp.isEmpty() || review.getCourse().getStatus() != app.Util.Enums.Status.DONE
                     || !role.equals("student") || !found)
                 return false;

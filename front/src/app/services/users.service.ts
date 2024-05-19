@@ -20,5 +20,9 @@ export class UsersService {
   static getEnrollmentsInstructorApi="/instructorenrollments"
   static acceptOrDenyApi="/makedecision"
   static cancelReservations = "/cancelReservation"
-  static updateReservation = "/updateReservation"
+  static notificationStudentApi="/notifications"
+  static pastEnrollmentsApi="/pastenrollments"
+  static currentEnrollmentsApi="/currentenrollments"
+  static deleteEnrollmentApi = "/enroll"
+  static makeReviewApi="/makereview"
 }

@@ -1,6 +1,8 @@
 <div class="notification-container">
   <button (click)="showMessage()" class="notification-button">Show notification</button>
-  <div *ngIf="showMessageClicked" class="message">{{ message }}</div>
+<div *ngFor="let m of message">
+  <div *ngIf="showMessageClicked" class="message" >{{ m.notification }}</div>
+</div>
 </div>
 
 <div class="container2">
@@ -27,7 +29,7 @@
           <td>{{ course.name }}</td>
           <td>{{ course.category }}</td>
           <td>{{course.rating}}</td>
-          <td><button (click)="enroll(course.id)" class="enroll-button">Enroll</button></td>
+          <td><button (click)="enroll(course.courseId)" class="enroll-button">Enroll</button></td>
         </tr>
       </tbody>
     </table>
@@ -41,7 +43,7 @@
   </div>
   <div class="card-body">
     <h5 class="card-title">{{ selectedCourse.name }}</h5>
-    <p class="card-text">Id:{{selectedCourse.id}} </p>
+    <p class="card-text">Id:{{selectedCourse.courseId}} </p>
     <p class="card-text">Category: {{ selectedCourse.category }}</p>
     <p class="card-text">Duration: {{ selectedCourse.duration }}</p>
     <p class="card-text">Capacity: {{ selectedCourse.capacity }}</p>
@@ -50,38 +52,53 @@
   </div>
 </div>
 
-
 <div class="container">
-    <h1>My Enrollments</h1>
+  <h1>My Enrollments</h1>
 
-    <div *ngIf="currentEnrollments.length > 0">
-      <h2>Current Enrollments</h2>
-      <div class="enrollment" *ngFor="let enrollment of currentEnrollments">
-        <div class="course-info">
-          <h3>{{ enrollment.courseName }}</h3>
-          <p>Category: {{ enrollment.category }}</p>
-          <p>Duration: {{ enrollment.duration }}</p>
-          <p>Rating: {{ enrollment.rating }}</p>
-          <p>Capacity: {{ enrollment.capacity }}</p>
-          <p>Enrolled Students: {{ enrollment.enrolledStudents }}</p>
-          <div class="cancel-button"><button (click)="cancelEnrollment(enrollment)" class="cancel-button">Cancel Enrollment</button></div>
-        </div>
+  <div *ngIf="currentEnrollments.length > 0">
+    <h2>Current Enrollments</h2>
+    <div class="enrollment" *ngFor="let enrollment of currentEnrollments">
+      <div class="course-info">
+        <p>StudentID: {{ enrollment.id?.userId }}</p>
+        <p>CourseID: {{ enrollment.id?.courseId }}</p>
+        <p>Status: {{ enrollment.status }}</p>
+        <div class="cancel-button"><button (click)="cancelEnrollment(enrollment)" class="cancel-button">Cancel Enrollment</button></div>
       </div>
     </div>
+  </div>
 
-    <div *ngIf="pastEnrollments.length > 0">
-      <h2>Past Enrollments</h2>
-      <div class="enrollment" *ngFor="let enrollment of pastEnrollments">
-        <div class="course-info">
-          <h3>{{ enrollment.courseName }}</h3>
-          <p>Category: {{ enrollment.category }}</p>
-          <p>Duration: {{ enrollment.duration }}</p>
-          <p>Rating: {{ enrollment.rating }}</p>
-          <p>Capacity: {{ enrollment.capacity }}</p>
-          <p>Enrolled Students: {{ enrollment.enrolledStudents }}</p>
-          <button (click)="enrollment.showReviewForm = !enrollment.showReviewForm" class="review-button">Make Review and Rating</button>
-        </div>
-        <div *ngIf="enrollment.showReviewForm">
+  <div *ngIf="pastEnrollments.length > 0">
+    <h2>Past Enrollments</h2>
+    <div class="enrollment" *ngFor="let enrollment of pastEnrollments">
+      <div class="course-info">
+        <p>StudentID: {{ enrollment.id?.userId }}</p>
+        <p>CourseID: {{ enrollment.id?.courseId }}</p>
+        <p>Status: {{ enrollment.status }}</p>
+
+        <button (click)="openReviewForm( )" class="review-button">Make Review and Rating</button>
+      </div>
+
+      <div *ngIf="showReviewForm">
+        <form (ngSubmit)="decide( enrollment.id?.courseId)">
+          <div>
+            <label for="rating">Rating:</label>
+            <input type="number" id="rating" name="rating" min="0"max="5" [(ngModel)]="rating">
+          </div>
+          <div>
+            <label for="review">Review:</label>
+            <textarea id="review" name="review" [(ngModel)]="review"></textarea>
+          </div>
+          <button type="submit" class="submit-button">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="currentEnrollments.length === 0 && pastEnrollments.length === 0">
+    <p>No enrollments found.</p>
+  </div>
+
+
+        <!-- <div *ngIf="showReviewForm">
           <form>
             <div>
               <label for="rating">Rating:</label>
@@ -96,10 +113,10 @@
         </div>
       </div>
     </div>
-    <div *ngIf="currentEnrollments.length === 0 && pastEnrollments.length === 0">
+    <div *ngIf="allEnrollments.length === 0 ">
       <p>No enrollments found.</p>
     </div>
-
+ -->
 
 
     <!-- <div *ngIf="pastEnrollments.length > 0">

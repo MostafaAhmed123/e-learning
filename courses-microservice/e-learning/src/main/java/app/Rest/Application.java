@@ -63,13 +63,14 @@ public class Application {
 
     @GET
     @Path("notapproved")
-    public List<Courses> notApproved(){
+    public List<Courses> notApproved() {
         return crsService.notApprovedYet();
     }
 
     @GET
     @Path("search")
-    public List<Courses> search(@QueryParam(value = "course") String course, @QueryParam(value = "sorted") boolean sorted) {
+    public List<Courses> search(@QueryParam(value = "course") String course,
+            @QueryParam(value = "sorted") boolean sorted) {
         return crsService.search(course, sorted);
     }
 
@@ -85,17 +86,23 @@ public class Application {
         return crsService.updateCourse(course, id);
     }
 
-    @GET
+    @POST
     @Path("makereview")
-    public boolean makeReview(ReviewDTO wrapper) {
+    public boolean makeReview(@QueryParam(value = "course") Long courseid, @QueryParam(value = "student") Long student,
+            @QueryParam(value = "rate") int rate, @QueryParam(value = "feedback") String feedback) {
+        System.out.println(rate);
+        System.out.println(feedback);
+        System.out.println(student);
+        System.out.println(courseid);
         Reviews review = new Reviews();
-        Courses course = crsService.getCourse(wrapper.course);
+        Courses course = crsService.getCourse(courseid);
+        System.out.println(course == null ? "course not found" : "course found");
         if (course == null)
             return false;
         review.setCourse(course);
-        review.setRating(wrapper.rating);
-        review.setReviewText(wrapper.reviewText);
-        review.setStudentId(wrapper.studentId);
+        review.setRating(rate);
+        review.setReviewText(feedback);
+        review.setStudentId(student);
         return reviewService.makeReview(review);
     }
 
@@ -107,10 +114,10 @@ public class Application {
 
     @GET
     @Path("reviews")
-    public List<ReviewDTO> getReviews(@QueryParam(value = "id") Long id){
+    public List<ReviewDTO> getReviews(@QueryParam(value = "id") Long id) {
         List<Reviews> reviews = reviewService.getReviews(id);
         List<ReviewDTO> res = new ArrayList<>();
-        for(Reviews review : reviews){
+        for (Reviews review : reviews) {
             ReviewDTO r = new ReviewDTO();
             // r.courseId = review.getCourse().getCourseId();
             r.id = review.getId();
@@ -124,13 +131,13 @@ public class Application {
 
     @GET
     @Path("reviews")
-    public List<Reviews> getReviews(){
+    public List<Reviews> getReviews() {
         return reviewService.getReviews();
     }
 
     @GET
     @Path("sortedcourses")
-    public List<Courses> getSortedCourses(){
+    public List<Courses> getSortedCourses() {
         return crsService.getAllCoursesSortedByRating();
     }
 

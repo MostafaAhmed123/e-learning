@@ -4,25 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class EnrollmentsDTO {
-    private Long userId;
-    private Long courseId;
+    private tempDTO id;
     private String status;
 
-    public Long getUserId() {
-        return userId;
-    }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public Long getCourseId() {
-        return courseId;
-    }
-
-    public void setCourseId(Long courseId) {
-        this.courseId = courseId;
-    }
 
     public String getStatus() {
         return status;
@@ -30,5 +15,13 @@ public class EnrollmentsDTO {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public tempDTO getId() {
+        return id;
+    }
+
+    public void setId(tempDTO id) {
+        this.id = id;
     }
 }

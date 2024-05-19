@@ -43,7 +43,10 @@ public class Application {
 
     @POST
     @Path("enroll")
-    public boolean enroll(EnrollmentRequestDTO enrollment){
+    public boolean enroll(@QueryParam(value = "course") Long course, @QueryParam(value = "student") Long student){
+        EnrollmentRequestDTO enrollment = new EnrollmentRequestDTO();
+        enrollment.courseId = course;
+        enrollment.studentId = student;
         return enrollService.enroll(enrollment);
     }
 
@@ -66,9 +69,15 @@ public class Application {
     }
 
     @GET
-    @Path("pastcurrentenrollments")
-    public List<List<CourseEnrollments>> getcurrentpastenrollments(@QueryParam(value = "id") Long id){
-        return enrollService.getPastCurrentEnrollments(id);
+    @Path("pastenrollments")
+    public List<CourseEnrollments> getpastenrollments(@QueryParam(value = "id") Long id){
+        return !enrollService.getPastCurrentEnrollments(id).isEmpty() ? enrollService.getPastCurrentEnrollments(id).get(1) : null;
+    }
+
+    @GET
+    @Path("currentenrollments")
+    public List<CourseEnrollments> getcurrentenrollments(@QueryParam(value = "id") Long id){
+        return !enrollService.getPastCurrentEnrollments(id).isEmpty() ? enrollService.getPastCurrentEnrollments(id).get(0) : null;
     }
 
     @GET
